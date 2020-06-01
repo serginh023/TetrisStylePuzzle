@@ -13,6 +13,12 @@ public class GameController : MonoBehaviour
     //shape ativo
     Shape m_activeShape;
 
+    float m_dropInterval = .25f;
+
+    float m_timeToDrop = 0f;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +45,20 @@ public class GameController : MonoBehaviour
         if (!m_gameBoard || !m_spawner)
             return;
 
-        if (m_activeShape)
-            m_activeShape.MoveDown();
+        if(Time.time > m_timeToDrop)
+        {
+            m_timeToDrop = Time.time + m_dropInterval;
+
+            if (m_activeShape)
+                m_activeShape.MoveDown();
+
+            if (!m_gameBoard.IsValidPosition(m_activeShape))
+            {
+                m_activeShape.MoveUp();
+                m_gameBoard.StoreShapeInGrid(m_activeShape);
+                if(m_spawner)
+                    m_activeShape = m_spawner.SpawnShape();
+            }
+        }
     }
 }
