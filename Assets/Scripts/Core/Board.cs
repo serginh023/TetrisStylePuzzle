@@ -69,7 +69,7 @@ public class Board : MonoBehaviour
         else 
             foreach (Transform child in shape.transform)
             {
-                Vector2 pos = child.position;
+                Vector2 pos = Vectorf.Round(child.position);
                 m_grid[(int)pos.x, (int)pos.y] = child;
             }
         
@@ -92,11 +92,13 @@ public class Board : MonoBehaviour
     void ClearRow(int y)
     {
         for (int x = 0; x < m_width; x++)
+        { 
             if (m_grid[x, y] != null)
-            {
                 Destroy(m_grid[x, y].gameObject);
-                m_grid[x, y] = null;
-            }
+
+            m_grid[x, y] = null;
+        }
+
     }
 
     void ShiftOneRowDown(int y)
