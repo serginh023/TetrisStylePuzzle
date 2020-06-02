@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-
     public Transform m_emptySprite;
     public int m_height = 30;
     public int m_width = 10;
@@ -21,12 +20,6 @@ public class Board : MonoBehaviour
     void Start()
     {
         DrawEmptyCells();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     bool IsWithinBoard(int x, int y)
@@ -72,21 +65,74 @@ public class Board : MonoBehaviour
     public void StoreShapeInGrid(Shape shape)
     {
         if(shape == null)
-        { 
             return;
-        }
-        else
-        {
+        else 
             foreach (Transform child in shape.transform)
             {
                 Vector2 pos = child.position;
                 m_grid[(int)pos.x, (int)pos.y] = child;
             }
-        }
+        
     }
 
     public bool isOccupied(int x, int y,Shape shape)
     {
         return (m_grid[x, y] != null && m_grid[x, y].parent != shape.transform);
+    }
+
+    bool IsComplete(int y)
+    {
+        for (int i = 0; i < m_width; i++)
+            if (m_grid[i, y] == null)
+                return false;
+
+        return true;
+    }
+
+    void ClearRow(int y)
+    {
+        for (int x = 0; x < m_width; x++)
+            if (m_grid[x, y] != null)
+            {
+                Destroy(m_grid[x, y].gameObject);
+                m_grid[x, y] = null;
+            }
+    }
+
+    void ShiftOneRowDown(int y)
+    {
+        for (int x = 0; x < m_width; x++)
+            if (m_grid[x, y] != null)
+            {       
+                m_grid[x, y - 1] = m_grid[x, y];
+                m_grid[x, y] = null;
+                m_grid[x, y - 1].position += new Vector3(0, -1, 0);
+            }
+    }
+
+    void ShiftRowsDown(int startY)
+    {
+        for (int i = startY; i < m_height; i++)
+            ShiftOneRowDown(i);
+    }
+
+    public void ClearAllRows()
+    {
+        for (int y = 0; y < m_height; y++)
+            if (IsComplete(y))
+            {
+                ClearRow(y);
+                ShiftRowsDown(y + 1);
+                y--;
+            }
+    }
+
+    public bool IsOverLimit(Shape shape)
+    {
+        foreach(Transform child in shape.transform)
+            if (child.transform.position.y >= (m_height - m_header - 1) )
+                return true;
+
+        return false;
     }
 }
