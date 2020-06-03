@@ -42,17 +42,4 @@ public class Shape : MonoBehaviour
         if(m_canRotate)
             transform.Rotate(0, 0, -90);
     }
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

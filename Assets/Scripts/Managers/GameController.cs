@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,6 +11,8 @@ public class GameController : MonoBehaviour
     Board m_gameBoard;
     [SerializeField]
     Spawner m_spawner;
+    [SerializeField]
+    SoundManager m_soundManager;
 
     //shape ativo
     Shape m_activeShape;
@@ -50,6 +53,9 @@ public class GameController : MonoBehaviour
         if (!m_gameBoard)
             Debug.LogWarning("WARNING! There is no board definied!");
 
+        if (!m_soundManager)
+            Debug.LogWarning("WARNING! There is no soundManager definied!");
+
         if (!m_spawner)
             Debug.LogWarning("WARNING! There is no spawner definied!");
         else
@@ -60,12 +66,13 @@ public class GameController : MonoBehaviour
                 m_activeShape = m_spawner.SpawnShape();
             }
         }
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!m_gameBoard || !m_spawner || !m_activeShape || m_gameOver)
+        if (!m_gameBoard || !m_spawner || !m_activeShape || m_gameOver || !m_soundManager)
             return;
 
         PlayerInput();
@@ -80,15 +87,29 @@ public class GameController : MonoBehaviour
             m_TimeToNextKeyLeftRight += Time.time + m_keyRepeatRateLeftRight;
             m_activeShape.MoveRight();
             if (!m_gameBoard.IsValidPosition(m_activeShape))
+            {
                 m_activeShape.MoveLeft();
-
+                PlaySound(m_soundManager.m_errorSound, .8f);
+            }
+            else
+            {
+                PlaySound(m_soundManager.m_moveSound, .8f);
+            }
+                
         }
         else if (Input.GetButton("MoveLeft") && Time.time > m_TimeToNextKeyLeftRight || Input.GetButtonDown("MoveLeft"))// GetButtonDown registra somente o primeiro frame que o botão foi pressionado
         {
             m_TimeToNextKeyLeftRight += Time.time + m_keyRepeatRateLeftRight;
             m_activeShape.MoveLeft();
             if (!m_gameBoard.IsValidPosition(m_activeShape))
+            {
                 m_activeShape.MoveRight();
+                PlaySound(m_soundManager.m_errorSound, .8f);
+            }
+            else
+            {
+                PlaySound(m_soundManager.m_moveSound, .8f);
+            }
 
         }
         else if (Input.GetButtonDown("Rotate") && Time.time > m_TimeToNextKeyRotate)// GetButtonDown registra somente o primeiro frame que o botão foi pressionado
@@ -96,7 +117,14 @@ public class GameController : MonoBehaviour
             m_TimeToNextKeyRotate = Time.time + m_keyRepeatRateRotate;
             m_activeShape.RotateRight();
             if (!m_gameBoard.IsValidPosition(m_activeShape))
+            {
                 m_activeShape.RotateLeft();
+                PlaySound(m_soundManager.m_errorSound, .8f);
+            }
+            else
+            {
+                PlaySound(m_soundManager.m_moveSound, .8f);
+            }
 
         }
         else if ( Input.GetButton("MoveDown") && (Time.time > m_TimeToNextKeyDown) || (Time.time > m_timeToDrop) )
@@ -145,6 +173,8 @@ public class GameController : MonoBehaviour
         Debug.LogWarning(m_activeShape + " Shape is over the limit check");
 
         m_gameOverPanel.SetActive(true);
+        PlaySound(m_soundManager.m_gameOverSound, .9f);
+        PlaySound(m_soundManager.m_gameOverVocalClip, .9f);
     }
 
     void LandShape()
@@ -159,6 +189,14 @@ public class GameController : MonoBehaviour
 
         m_gameBoard.ClearAllRows();
 
+        PlaySound(m_soundManager.m_dropSound, .8f);
+
+        if (m_gameBoard.m_completedRows > 0)
+        {
+            if (m_gameBoard.m_completedRows > 1)
+                PlaySound(m_soundManager.GetRandomClip(m_soundManager.m_vocalClips), .8f);
+            PlaySound(m_soundManager.m_clearRowSound, .8f);
+        }
 
     }
 
@@ -168,6 +206,11 @@ public class GameController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    void PlaySound(AudioClip audioClip, float volmultiplier)
+    {
+        if (m_soundManager.m_fxEnabled && audioClip)
+            AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position, Mathf.Clamp( m_soundManager.m_fxVolume * volmultiplier, 0.05f, 1f ));
+    }
 
 
 }
