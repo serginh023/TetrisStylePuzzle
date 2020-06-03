@@ -885,7 +885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67d734b53ce4f9644883e6c54d190e18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_musicEnabled: 0
+  m_musicEnabled: 1
   m_fxEnabled: 1
   m_musicVolume: 0.2
   m_fxVolume: 0.5
@@ -905,6 +905,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e753dc3dea92f4b1c81255878103653f, type: 3}
   - {fileID: 8300000, guid: 8b9eee15a25ac4457bc8de1db8deed46, type: 3}
   m_gameOverVocalClip: {fileID: 8300000, guid: dde698f7e18ad439d93644afcb0de99b, type: 3}
+  m_fxIconToogle: {fileID: 1309747436142288602}
+  m_musicIconToogle: {fileID: 1309747437816758942}
 --- !u!1 &648648313
 GameObject:
   m_ObjectHideFlags: 0
@@ -2388,6 +2390,7 @@ MonoBehaviour:
   m_keyRepeatRateDown: 0.05
   m_keyRepeatRateRotate: 0.065
   m_gameOverPanel: {fileID: 902537407}
+  m_rotIconToggle: {fileID: 1309747437614856944}
 --- !u!4 &2093355999
 Transform:
   m_ObjectHideFlags: 0
@@ -2486,6 +2489,7 @@ GameObject:
   - component: {fileID: 1309747436142288678}
   - component: {fileID: 1309747436142288676}
   - component: {fileID: 1309747436142288679}
+  - component: {fileID: 1309747436142288602}
   m_Layer: 5
   m_Name: FXIcon
   m_TagString: Untagged
@@ -2493,6 +2497,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1309747436142288602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309747436142288601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aeaeea1674d65a43bebd4affb5f2774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_iconTrue: {fileID: 21300000, guid: dcbed661adc1edb4b902abe9ac752265, type: 3}
+  m_iconFalse: {fileID: 21300000, guid: bc5acf93e4be69e4da197b2518875539, type: 3}
+  m_myDefaultIconState: 1
 --- !u!222 &1309747436142288676
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3402,6 +3421,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1309747437027162398}
   - component: {fileID: 1309747437027162399}
+  - component: {fileID: 1309747437027162400}
   m_Layer: 5
   m_Name: Rotate
   m_TagString: Untagged
@@ -3452,6 +3472,60 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1309747437027162400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309747437027162397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1309747437614856977}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2093355998}
+        m_MethodName: ToggleRotDirection
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1309747437047092532
 GameObject:
   m_ObjectHideFlags: 0
@@ -3854,17 +3928,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1309747437816758941}
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1309747437382053188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3953,6 +4016,7 @@ GameObject:
   - component: {fileID: 1309747437614856976}
   - component: {fileID: 1309747437614856978}
   - component: {fileID: 1309747437614856977}
+  - component: {fileID: 1309747437614856944}
   m_Layer: 5
   m_Name: RotateIcon
   m_TagString: Untagged
@@ -3960,6 +4024,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1309747437614856944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309747437614856943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aeaeea1674d65a43bebd4affb5f2774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_iconTrue: {fileID: 21300000, guid: 8e929fc3258b4c648b26d69cf1d0b3f8, type: 3}
+  m_iconFalse: {fileID: 21300000, guid: 19f8d09158c27a74c86c3f478ea04b80, type: 3}
+  m_myDefaultIconState: 1
 --- !u!224 &1309747437614856976
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4176,6 +4255,7 @@ GameObject:
   - component: {fileID: 1309747437816759138}
   - component: {fileID: 1309747437816759136}
   - component: {fileID: 1309747437816759139}
+  - component: {fileID: 1309747437816758942}
   m_Layer: 5
   m_Name: MusicIcon
   m_TagString: Untagged
@@ -4183,6 +4263,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1309747437816758942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309747437816758941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aeaeea1674d65a43bebd4affb5f2774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_iconTrue: {fileID: 21300000, guid: e2e841353490d5541b4c2ad8100f2846, type: 3}
+  m_iconFalse: {fileID: 21300000, guid: d5df5b600f350fe4da7b4c645c13c165, type: 3}
+  m_myDefaultIconState: 1
 --- !u!222 &1309747437816759136
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -31,6 +31,11 @@ public class SoundManager : MonoBehaviour
 
     public AudioClip m_gameOverVocalClip;
 
+    public IconToggle m_fxIconToogle;
+
+    public IconToggle m_musicIconToogle;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,11 +51,20 @@ public class SoundManager : MonoBehaviour
     {
         m_musicEnabled = !m_musicEnabled;
         UpdateMusic();
+
+        if (m_musicIconToogle)
+        {
+            m_musicIconToogle.ToogleIcon(m_musicEnabled);
+        }
     }
 
     public void ToogleFX()
     {
         m_fxEnabled = !m_fxEnabled;
+        if (m_fxIconToogle)
+        {
+            m_fxIconToogle.ToogleIcon(m_fxEnabled);
+        }
     }
 
     void PlayBackGroundMusic(AudioClip musicCLip)

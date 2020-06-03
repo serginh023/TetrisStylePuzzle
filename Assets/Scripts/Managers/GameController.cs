@@ -43,6 +43,10 @@ public class GameController : MonoBehaviour
 
     public GameObject m_gameOverPanel;
 
+    public IconToggle m_rotIconToggle;
+
+    bool m_clockwise = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -115,10 +119,10 @@ public class GameController : MonoBehaviour
         else if (Input.GetButtonDown("Rotate") && Time.time > m_TimeToNextKeyRotate)// GetButtonDown registra somente o primeiro frame que o botão foi pressionado
         {
             m_TimeToNextKeyRotate = Time.time + m_keyRepeatRateRotate;
-            m_activeShape.RotateRight();
+            m_activeShape.RotateClockwise(m_clockwise);
             if (!m_gameBoard.IsValidPosition(m_activeShape))
             {
-                m_activeShape.RotateLeft();
+                m_activeShape.RotateClockwise(!m_clockwise);
                 PlaySound(m_soundManager.m_errorSound, .8f);
             }
             else
@@ -147,23 +151,9 @@ public class GameController : MonoBehaviour
             }
                 
         }
-
-        //Drop
-        if (Time.time > m_timeToDrop)
-        {
-            m_timeToDrop = Time.time + m_dropRate;
-
-            if (m_activeShape)
-                m_activeShape.MoveDown();
-
-            if (!m_gameBoard.IsValidPosition(m_activeShape))
-            {
-                m_activeShape.MoveUp();
-                m_gameBoard.StoreShapeInGrid(m_activeShape);
-                if (m_spawner)
-                    m_activeShape = m_spawner.SpawnShape();
-            }
-        }
+        else if(Input.GetButtonDown("ToggleRotation"))
+            ToggleRotDirection();
+        
     }
 
     private void GameOver()
@@ -212,5 +202,12 @@ public class GameController : MonoBehaviour
             AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position, Mathf.Clamp( m_soundManager.m_fxVolume * volmultiplier, 0.05f, 1f ));
     }
 
+
+    public void ToggleRotDirection()
+    {
+        m_clockwise = !m_clockwise;
+        if (m_rotIconToggle)
+            m_rotIconToggle.ToogleIcon(m_clockwise);
+    }
 
 }

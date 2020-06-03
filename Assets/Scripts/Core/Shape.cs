@@ -31,15 +31,23 @@ public class Shape : MonoBehaviour
         Move(new Vector3(0, 1, 0));
     }
 
-    public void RotateLeft()
+    void RotateLeft()
     {
         if(m_canRotate)
             transform.Rotate(0, 0, 90);
     }
 
-    public void RotateRight()
+    void RotateRight()
     {
         if(m_canRotate)
             transform.Rotate(0, 0, -90);
+    }
+
+    public void RotateClockwise(bool clockwise)
+    {
+        if (clockwise)
+            RotateRight();
+        else
+            RotateLeft();
     }
 }
