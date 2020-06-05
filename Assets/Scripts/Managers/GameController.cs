@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour
     SoundManager m_soundManager;
     [SerializeField]
     ScoreManager m_scoreManager;
+    [SerializeField]
+    Ghost m_ghost;
 
     //shape ativo
     Shape m_activeShape;
@@ -54,6 +56,7 @@ public class GameController : MonoBehaviour
 
     public GameObject m_pausePanel;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -90,6 +93,14 @@ public class GameController : MonoBehaviour
             return;
 
         PlayerInput();
+    }
+
+    private void LateUpdate()
+    {
+        if (m_ghost)
+        {
+            m_ghost.DrawGhost(m_activeShape, m_gameBoard);
+        }
     }
 
 
@@ -141,9 +152,9 @@ public class GameController : MonoBehaviour
             }
 
         }
-        else if (Input.GetButton("MoveDown") && (Time.time > m_TimeToNextKeyDown) || (Time.time > m_timeToDrop))
+        else if ( Input.GetButton("MoveDown") && (Time.time > m_TimeToNextKeyDown) || (Time.time > m_timeToDrop) )
         {
-            m_timeToDrop = Time.time + m_dropRateModded;
+            m_timeToDrop = Time.time + m_dropRate;
             m_TimeToNextKeyDown = Time.time + m_keyRepeatRateDown;
             m_activeShape.MoveDown();
 
@@ -186,6 +197,9 @@ public class GameController : MonoBehaviour
         m_gameBoard.StoreShapeInGrid(m_activeShape);
         m_activeShape = m_spawner.SpawnShape();
 
+        if (m_ghost)
+            m_ghost.Reset();
+
         m_TimeToNextKeyLeftRight = Time.time + m_keyRepeatRateLeftRight;
         m_TimeToNextKeyDown = Time.time + m_keyRepeatRateDown;
         m_TimeToNextKeyRotate = Time.time + m_keyRepeatRateRotate;
@@ -207,10 +221,7 @@ public class GameController : MonoBehaviour
                 if (m_gameBoard.m_completedRows > 1)
                 PlaySound(m_soundManager.GetRandomClip(m_soundManager.m_vocalClips), .8f);
             
-
             PlaySound(m_soundManager.m_clearRowSound, .8f);
-
-
         }
 
     }
