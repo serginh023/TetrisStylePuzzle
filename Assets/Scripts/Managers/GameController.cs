@@ -13,13 +13,16 @@ public class GameController : MonoBehaviour
     Spawner m_spawner;
     [SerializeField]
     SoundManager m_soundManager;
+    [SerializeField]
+    ScoreManager m_scoreManager;
 
     //shape ativo
     Shape m_activeShape;
 
     [SerializeField]
     float m_dropRate = .9f;
-
+    float m_dropRateModded;
+    
     float m_timeToDrop = 0f;
 
     float m_TimeToNextKeyLeftRight;
@@ -47,6 +50,10 @@ public class GameController : MonoBehaviour
 
     bool m_clockwise = true;
 
+    public bool m_isPaused = false;
+
+    public GameObject m_pausePanel;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,6 +66,9 @@ public class GameController : MonoBehaviour
 
         if (!m_soundManager)
             Debug.LogWarning("WARNING! There is no soundManager definied!");
+
+        if (!m_scoreManager)
+            Debug.LogWarning("WARNING! There is no scoreManager definied!");
 
         if (!m_spawner)
             Debug.LogWarning("WARNING! There is no spawner definied!");
@@ -99,7 +109,7 @@ public class GameController : MonoBehaviour
             {
                 PlaySound(m_soundManager.m_moveSound, .8f);
             }
-                
+
         }
         else if (Input.GetButton("MoveLeft") && Time.time > m_TimeToNextKeyLeftRight || Input.GetButtonDown("MoveLeft"))// GetButtonDown registra somente o primeiro frame que o botão foi pressionado
         {
@@ -131,15 +141,15 @@ public class GameController : MonoBehaviour
             }
 
         }
-        else if ( Input.GetButton("MoveDown") && (Time.time > m_TimeToNextKeyDown) || (Time.time > m_timeToDrop) )
+        else if (Input.GetButton("MoveDown") && (Time.time > m_TimeToNextKeyDown) || (Time.time > m_timeToDrop))
         {
-            m_timeToDrop = Time.time + m_dropRate;
+            m_timeToDrop = Time.time + m_dropRateModded;
             m_TimeToNextKeyDown = Time.time + m_keyRepeatRateDown;
             m_activeShape.MoveDown();
 
             if (!m_gameBoard.IsValidPosition(m_activeShape))
             {
-                if(m_gameBoard.IsOverLimit(m_activeShape))
+                if (m_gameBoard.IsOverLimit(m_activeShape))
                 {
                     GameOver();
                 }
@@ -147,13 +157,16 @@ public class GameController : MonoBehaviour
                 {
                     LandShape();
                 }
-                    
+
             }
-                
+
         }
-        else if(Input.GetButtonDown("ToggleRotation"))
+        else if (Input.GetButtonDown("ToggleRotation"))
             ToggleRotDirection();
-        
+        else if (Input.GetButtonDown("Pause"))
+            TogglePause();
+
+
     }
 
     private void GameOver()
@@ -183,9 +196,21 @@ public class GameController : MonoBehaviour
 
         if (m_gameBoard.m_completedRows > 0)
         {
-            if (m_gameBoard.m_completedRows > 1)
+            m_scoreManager.ScoreLines(m_gameBoard.m_completedRows);
+
+            if (m_scoreManager.m_didLevelUp)
+            {
+                PlaySound(m_soundManager.m_levelUpVocalClip, .75f);
+                m_dropRateModded = m_dropRate - Mathf.Clamp( ((float)m_scoreManager.m_level - 1) * 0.05f, 0.1f, 1f );
+            }
+            else
+                if (m_gameBoard.m_completedRows > 1)
                 PlaySound(m_soundManager.GetRandomClip(m_soundManager.m_vocalClips), .8f);
+            
+
             PlaySound(m_soundManager.m_clearRowSound, .8f);
+
+
         }
 
     }
@@ -193,6 +218,7 @@ public class GameController : MonoBehaviour
     public void Restart()
     {
         Debug.Log("Restarted");
+        Time.timeScale = (m_isPaused) ? 0 : 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -208,6 +234,28 @@ public class GameController : MonoBehaviour
         m_clockwise = !m_clockwise;
         if (m_rotIconToggle)
             m_rotIconToggle.ToogleIcon(m_clockwise);
+    }
+
+    public void TogglePause()
+    {
+        if (m_gameOver)
+        {
+            return;
+        }
+
+        m_isPaused = !m_isPaused;
+
+        //if (m_isPaused)
+        //{
+            m_pausePanel.SetActive(m_isPaused);
+
+            if (m_soundManager)
+            {
+                m_soundManager.m_musicSource.volume = (m_isPaused) ? m_soundManager.m_musicVolume * .25f : m_soundManager.m_musicVolume;
+            }
+
+            Time.timeScale = (m_isPaused) ? 0 : 1;
+        //}
     }
 
 }
