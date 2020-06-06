@@ -17,6 +17,7 @@ public class Spawner : MonoBehaviour
     {
         InitQueue();
     }
+
     Shape GetRandomShape()
     {
         int i = (int)Random.Range(0, m_allShapes.Length);

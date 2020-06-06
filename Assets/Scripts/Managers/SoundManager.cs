@@ -37,6 +37,7 @@ public class SoundManager : MonoBehaviour
 
     public IconToggle m_musicIconToogle;
 
+    public AudioClip m_holdClip;
 
     // Start is called before the first frame update
     void Start()

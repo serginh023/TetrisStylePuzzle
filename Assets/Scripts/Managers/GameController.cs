@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour
     ScoreManager m_scoreManager;
     [SerializeField]
     Ghost m_ghost;
+    [SerializeField]
+    Holder m_holder;
 
     //shape ativo
     Shape m_activeShape;
@@ -176,7 +178,10 @@ public class GameController : MonoBehaviour
             ToggleRotDirection();
         else if (Input.GetButtonDown("Pause"))
             TogglePause();
-
+        else if (Input.GetButtonDown("Hold"))
+        {
+            Hold();
+        }
 
     }
 
@@ -199,6 +204,9 @@ public class GameController : MonoBehaviour
 
         if (m_ghost)
             m_ghost.Reset();
+
+        if (m_holder)
+            m_holder.m_canRelease = true;
 
         m_TimeToNextKeyLeftRight = Time.time + m_keyRepeatRateLeftRight;
         m_TimeToNextKeyDown = Time.time + m_keyRepeatRateDown;
@@ -233,7 +241,7 @@ public class GameController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    void PlaySound(AudioClip audioClip, float volmultiplier)
+    void PlaySound(AudioClip audioClip, float volmultiplier = .8f)
     {
         if (m_soundManager.m_fxEnabled && audioClip)
             AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position, Mathf.Clamp( m_soundManager.m_fxVolume * volmultiplier, 0.05f, 1f ));
@@ -269,4 +277,34 @@ public class GameController : MonoBehaviour
         //}
     }
 
+    public void Hold()
+    {
+        if (!m_holder)
+        {
+            return;
+        }
+
+        if (!m_holder.m_heldShape)
+        {
+            m_holder.Catch(m_activeShape);
+            m_activeShape = m_spawner.SpawnShape();
+            PlaySound(m_soundManager.m_holdClip);
+            if (m_ghost)
+                m_ghost.Reset();
+        }
+        else if (m_holder.m_canRelease)
+        {
+            Shape temp = m_activeShape;
+            m_activeShape = m_holder.Release();
+            m_activeShape.transform.position = m_spawner.transform.position;
+            m_holder.Catch(temp);
+            PlaySound(m_soundManager.m_holdClip);
+        }
+        else
+        {
+            Debug.LogWarning("GAMECONTROLLER! Wait for cool down!");
+            PlaySound(m_soundManager.m_errorSound);
+        }
+
+    }
 }
