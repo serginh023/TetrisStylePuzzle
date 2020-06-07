@@ -58,6 +58,9 @@ public class GameController : MonoBehaviour
 
     public GameObject m_pausePanel;
 
+    [SerializeField]
+    ParticlePlayer m_gameOverFX;
+
 
     // Start is called before the first frame update
     void Start()
@@ -190,10 +193,20 @@ public class GameController : MonoBehaviour
         m_activeShape.MoveUp();
         m_gameOver = true;
         Debug.LogWarning(m_activeShape + " Shape is over the limit check");
-
-        m_gameOverPanel.SetActive(true);
         PlaySound(m_soundManager.m_gameOverSound, .9f);
         PlaySound(m_soundManager.m_gameOverVocalClip, .9f);
+        StartCoroutine(gameOverRoutine());
+    }
+
+    IEnumerator gameOverRoutine()
+    {
+        if (m_gameOverFX)
+            m_gameOverFX.Play();
+
+        yield return new WaitForSeconds(.4f);
+
+        if(m_gameOverPanel)
+            m_gameOverPanel.SetActive(true);
     }
 
     void LandShape()
@@ -265,31 +278,23 @@ public class GameController : MonoBehaviour
     public void TogglePause()
     {
         if (m_gameOver)
-        {
             return;
-        }
 
         m_isPaused = !m_isPaused;
 
-        //if (m_isPaused)
-        //{
-            m_pausePanel.SetActive(m_isPaused);
+        m_pausePanel.SetActive(m_isPaused);
 
-            if (m_soundManager)
-            {
-                m_soundManager.m_musicSource.volume = (m_isPaused) ? m_soundManager.m_musicVolume * .25f : m_soundManager.m_musicVolume;
-            }
+        if (m_soundManager)
+            m_soundManager.m_musicSource.volume = (m_isPaused) ? m_soundManager.m_musicVolume * .25f : m_soundManager.m_musicVolume;
 
-            Time.timeScale = (m_isPaused) ? 0 : 1;
-        //}
+        Time.timeScale = (m_isPaused) ? 0 : 1;
+
     }
 
     public void Hold()
     {
         if (!m_holder)
-        {
             return;
-        }
 
         if (!m_holder.m_heldShape)
         {
@@ -306,6 +311,8 @@ public class GameController : MonoBehaviour
             m_activeShape.transform.position = m_spawner.transform.position;
             m_holder.Catch(temp);
             PlaySound(m_soundManager.m_holdClip);
+            if (m_ghost)
+                m_ghost.Reset();
         }
         else
         {

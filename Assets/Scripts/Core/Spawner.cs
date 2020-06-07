@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿//using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ public class Spawner : MonoBehaviour
 
     float m_queueScale = .5f;
 
+    [SerializeField]
+    ParticlePlayer m_spawnFx;
 
     void Awake()
     {
@@ -34,7 +37,11 @@ public class Spawner : MonoBehaviour
         Shape shape = null;
         shape = GetQueuedShape();//shape = Instantiate(GetRandomShape(), transform.position, Quaternion.identity) as Shape;
         shape.transform.position = transform.position;
-        shape.transform.localScale = Vector3.one;
+        StartCoroutine(GrowShape(shape, transform.position, .25f));
+
+        if (m_spawnFx)
+            m_spawnFx.Play();
+
         if (shape)
             return shape;
         else
@@ -70,9 +77,7 @@ public class Spawner : MonoBehaviour
         Shape firstShape = null;
 
         if (m_queuedShapes[0])
-        {
             firstShape = m_queuedShapes[0];
-        }
 
         for(int i = 1; i < m_queuedShapes.Length; i++)
         {
@@ -85,5 +90,22 @@ public class Spawner : MonoBehaviour
         FillQueue();
 
         return firstShape;
+    }
+
+    IEnumerator GrowShape(Shape shape, Vector3 position, float growTime = .5f)
+    {
+        float size = 0f;
+        growTime = Mathf.Clamp(growTime, 0.1f, 1.5f);
+        float sizeDelta = Time.deltaTime / growTime;
+
+        while (size < 1f)
+        {
+            shape.transform.localScale = new Vector3(size, size, size);
+            size += sizeDelta;
+            shape.transform.position = transform.position;
+            yield return null;
+        }
+
+        shape.transform.localScale = Vector3.one;
     }
 }

@@ -20,6 +20,9 @@ public class ScoreManager : MonoBehaviour
 
     public bool m_didLevelUp = false;
 
+    [SerializeField]
+    ParticlePlayer m_levelUpFX;
+
     public void ScoreLines(int n)
     {
         m_didLevelUp = false;
@@ -93,5 +96,6 @@ public class ScoreManager : MonoBehaviour
         m_level++;
         m_lines = m_linesperLevel * m_level;
         m_didLevelUp = true;
+        m_levelUpFX.Play();
     }
 }
