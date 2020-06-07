@@ -21,6 +21,7 @@ public class Holder : MonoBehaviour
         if (!shape)
         {
             Debug.LogWarning("HOLDER Invalid Shape");
+            return;
         }
 
         if (m_holderXform)
@@ -29,6 +30,7 @@ public class Holder : MonoBehaviour
             shape.transform.localScale = new Vector3(m_scale, m_scale, m_scale);
             m_heldShape = shape;
             m_canRelease = true;
+            shape.transform.rotation = Quaternion.identity;
         }
         else
         {
