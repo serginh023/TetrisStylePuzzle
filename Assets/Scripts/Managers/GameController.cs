@@ -198,38 +198,45 @@ public class GameController : MonoBehaviour
 
     void LandShape()
     {
-        m_activeShape.MoveUp();
-        m_gameBoard.StoreShapeInGrid(m_activeShape);
-        m_activeShape = m_spawner.SpawnShape();
-
-        if (m_ghost)
-            m_ghost.Reset();
-
-        if (m_holder)
-            m_holder.m_canRelease = true;
-
-        m_TimeToNextKeyLeftRight = Time.time + m_keyRepeatRateLeftRight;
-        m_TimeToNextKeyDown = Time.time + m_keyRepeatRateDown;
-        m_TimeToNextKeyRotate = Time.time + m_keyRepeatRateRotate;
-
-        m_gameBoard.ClearAllRows();
-
-        PlaySound(m_soundManager.m_dropSound, .8f);
-
-        if (m_gameBoard.m_completedRows > 0)
+        if (m_activeShape)
         {
-            m_scoreManager.ScoreLines(m_gameBoard.m_completedRows);
 
-            if (m_scoreManager.m_didLevelUp)
+            m_activeShape.MoveUp();
+            m_gameBoard.StoreShapeInGrid(m_activeShape);
+            m_activeShape.LandShapeFX();
+
+            if (m_ghost)
+                m_ghost.Reset();
+
+            if (m_holder)
+                m_holder.m_canRelease = true;
+
+            m_activeShape = m_spawner.SpawnShape();
+
+            m_TimeToNextKeyLeftRight = Time.time + m_keyRepeatRateLeftRight;
+            m_TimeToNextKeyDown = Time.time + m_keyRepeatRateDown;
+            m_TimeToNextKeyRotate = Time.time + m_keyRepeatRateRotate;
+
+            m_gameBoard.StartCoroutine("ClearAllRows");
+
+            PlaySound(m_soundManager.m_dropSound, .8f);
+
+            if (m_gameBoard.m_completedRows > 0)
             {
-                PlaySound(m_soundManager.m_levelUpVocalClip, .75f);
-                m_dropRateModded = m_dropRate - Mathf.Clamp( ((float)m_scoreManager.m_level - 1) * 0.05f, 0.1f, 1f );
+                m_scoreManager.ScoreLines(m_gameBoard.m_completedRows);
+
+                if (m_scoreManager.m_didLevelUp)
+                {
+                    PlaySound(m_soundManager.m_levelUpVocalClip, .75f);
+                    m_dropRateModded = m_dropRate - Mathf.Clamp(((float)m_scoreManager.m_level - 1) * 0.05f, 0.1f, 1f);
+                }
+                else
+                    if (m_gameBoard.m_completedRows > 1)
+                    PlaySound(m_soundManager.GetRandomClip(m_soundManager.m_vocalClips), .8f);
+
+                PlaySound(m_soundManager.m_clearRowSound, .8f);
             }
-            else
-                if (m_gameBoard.m_completedRows > 1)
-                PlaySound(m_soundManager.GetRandomClip(m_soundManager.m_vocalClips), .8f);
-            
-            PlaySound(m_soundManager.m_clearRowSound, .8f);
+
         }
 
     }

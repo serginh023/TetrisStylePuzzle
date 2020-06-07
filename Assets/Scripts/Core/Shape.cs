@@ -6,6 +6,12 @@ public class Shape : MonoBehaviour
 {
     bool m_canRotate = true;
     public Vector3 m_QueueOffSet;
+    public GameObject[] m_glowSquareFX;
+
+    private void Awake()
+    {
+        m_glowSquareFX = GameObject.FindGameObjectsWithTag("LandShapeFX");
+    }
 
     void Move(Vector3 moveDirection)
     {
@@ -50,5 +56,23 @@ public class Shape : MonoBehaviour
             RotateRight();
         else
             RotateLeft();
+    }
+
+    public void LandShapeFX()
+    {
+        int i = 0;
+        //Transform[] transforms = GetComponentsInChildren<Transform>();
+        //for(int i = 0; i < m_glowSquareFX.Length; i++)
+        foreach(Transform child in transform)//subistitui as duas linhas acima
+        {
+            if (m_glowSquareFX[i])
+            {
+                m_glowSquareFX[i].transform.position = new Vector3(child.position.x, child.position.y, -2);
+                ParticlePlayer pp = m_glowSquareFX[i].GetComponent<ParticlePlayer>();
+                if(pp)
+                    pp.Play();
+            }
+            i++;
+        }
     }
 }
