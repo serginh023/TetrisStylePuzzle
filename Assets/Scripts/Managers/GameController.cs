@@ -63,9 +63,21 @@ public class GameController : MonoBehaviour
 
     enum Direction { none, left, right, up, down };
 
+    Direction m_dragDirection = Direction.none;
     Direction m_swipeDirection = Direction.none;
-    Direction m_swipeEndDirection = Direction.none;
 
+    float m_timeToNextDrag;
+    float m_timeToNextSwipe;
+
+    [SerializeField]
+    [Range(.05f, 1f)] 
+    float m_minTimeToDrag = .15f;
+
+    [SerializeField]
+    [Range(.05f, 1f)]
+    float m_minTimeToSwipe = .3f;
+
+    bool m_didTap = false;
 
     // Start is called before the first frame update
     void Start()
@@ -125,29 +137,32 @@ public class GameController : MonoBehaviour
         #endregion
 
         #region MOBILE
-        else if ((m_swipeDirection == Direction.right && Time.time > m_TimeToNextKeyLeftRight) || m_swipeEndDirection == Direction.right)
+        else if ( (m_dragDirection == Direction.right && Time.time > m_timeToNextDrag)
+            ||
+                (m_swipeDirection == Direction.right && Time.time > m_timeToNextSwipe) )
         {
             MoveRight();
-            m_swipeDirection = Direction.none;
-            m_swipeEndDirection = Direction.none;
+            m_timeToNextDrag = Time.time + m_minTimeToDrag;
+            m_timeToNextSwipe = Time.time + m_minTimeToSwipe;
         }
-        else if ((m_swipeDirection == Direction.left && Time.time > m_TimeToNextKeyLeftRight) || m_swipeEndDirection == Direction.left)
+        else if ( (m_dragDirection == Direction.left && Time.time > m_timeToNextDrag)
+            ||
+                (m_swipeDirection == Direction.left && Time.time > m_timeToNextSwipe) )
         {
             MoveLeft();
-            m_swipeDirection = Direction.none;
-            m_swipeEndDirection = Direction.none;
+            m_timeToNextDrag = Time.time + m_minTimeToDrag;
+            m_timeToNextSwipe = Time.time + m_minTimeToSwipe;
         }
-        else if (m_swipeEndDirection == Direction.up)//somente essa verificação porque é um "tap"
+        else if ( m_didTap || (m_swipeDirection == Direction.up && Time.time > m_timeToNextSwipe) )
         {
             Rotate();
-            m_swipeDirection = Direction.none;
-            m_swipeEndDirection = Direction.none;
+            m_timeToNextSwipe = Time.time + m_minTimeToSwipe;
         }
-        else if (m_swipeDirection == Direction.down && Time.time > m_TimeToNextKeyDown)
+        else if ( (m_dragDirection == Direction.down && Time.time > m_timeToNextDrag)
+            ||
+                (m_swipeDirection == Direction.down && Time.time > m_timeToNextSwipe) )
         {
             MoveDown();
-            m_swipeDirection = Direction.none;
-            m_swipeEndDirection = Direction.none;
         }
         #endregion
 
@@ -157,6 +172,10 @@ public class GameController : MonoBehaviour
             TogglePause();
         else if (Input.GetButtonDown("Hold"))
             Hold();
+
+        m_dragDirection = Direction.none;
+        m_swipeDirection = Direction.none;
+        m_didTap = false;
 
     }
 
@@ -291,7 +310,6 @@ public class GameController : MonoBehaviour
             AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position, Mathf.Clamp( m_soundManager.m_fxVolume * volmultiplier, 0.05f, 1f ));
     }
 
-
     public void ToggleRotDirection()
     {
         m_clockwise = !m_clockwise;
@@ -346,14 +364,19 @@ public class GameController : MonoBehaviour
 
     }
 
+    void TapHandler(Vector2 swipeMovement)
+    {
+        m_didTap = true;
+    }
+
+    void DragHandler(Vector2 dragMovement)
+    {
+        m_dragDirection = GetDirection(dragMovement);
+    }
+
     void SwipeHandler(Vector2 swipeMovement)
     {
         m_swipeDirection = GetDirection(swipeMovement);
-    }
-
-    void SwipeEndHandler(Vector2 swipeMovement)
-    {
-        m_swipeEndDirection = GetDirection(swipeMovement);
     }
 
     Direction GetDirection(Vector2 swipeMovement)
@@ -362,26 +385,26 @@ public class GameController : MonoBehaviour
 
         //horizontal
         if (Mathf.Abs(swipeMovement.x) > Mathf.Abs(swipeMovement.y))
-        {
-            swipeDir = (swipeMovement.x >= 0) ? Direction.right : Direction.left; 
-        }
+            swipeDir = (swipeMovement.x >= 0) ? Direction.right : Direction.left;
+        //vertical
         else
-        {
             swipeDir = (swipeMovement.y >= 0) ? Direction.up : Direction.down;
-        }
 
         return swipeDir;
     }
 
     private void OnEnable()
     {
+        TouchManager.DragEvent += DragHandler;
         TouchManager.SwipeEvent += SwipeHandler;
-        TouchManager.SwipeEndEvent += SwipeEndHandler;
+        TouchManager.TapEvent += TapHandler;
     }
 
     private void OnDisable()
     {
+        TouchManager.DragEvent -= DragHandler;
         TouchManager.SwipeEvent -= SwipeHandler;
-        TouchManager.SwipeEndEvent -= SwipeEndHandler;
+        TouchManager.TapEvent -= TapHandler;
     }
+
 }

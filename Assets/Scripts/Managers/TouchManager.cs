@@ -7,22 +7,38 @@ public class TouchManager : MonoBehaviour
 {
     public delegate void TouchEventHandler(Vector2 swipe);
 
+    public static event TouchEventHandler DragEvent;
     public static event TouchEventHandler SwipeEvent;
-    public static event TouchEventHandler SwipeEndEvent;
+    public static event TouchEventHandler TapEvent;
 
     Vector2 m_touchMovement;
-    int m_minSwipeDistance = 10;
+
+    [Range(50, 150)][SerializeField]
+    int m_minDragDistance = 100;
+
+    [Range(50, 150)][SerializeField]
+    int m_minSwipeDistance = 200;
+
+    [Range(.01f, .5f)][SerializeField]
+    int m_timeTapWindow = 200;
+    float m_timeTapMax = 0.1f;
+
+    void OnDrag()
+    {
+        if(DragEvent != null)
+            DragEvent(m_touchMovement);
+    }
 
     void OnSwipe()
     {
-        if(SwipeEvent != null)
+        if (SwipeEvent != null)
             SwipeEvent(m_touchMovement);
     }
 
-    void OnSwipeEnd()
+    void OnTap()
     {
-        if (SwipeEndEvent != null)
-            SwipeEndEvent(m_touchMovement);
+        if (TapEvent != null)
+            TapEvent(m_touchMovement);
     }
 
     public Text mDiagnosticText1;
@@ -65,18 +81,37 @@ public class TouchManager : MonoBehaviour
         {
             Touch touch = Input.touches[0];
             if(touch.phase == TouchPhase.Began)
+            {
                 m_touchMovement = Vector2.zero;
+                m_timeTapMax = Time.time + m_timeTapWindow;
+            }
 
             else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
             {
                 m_touchMovement += touch.deltaPosition;
 
-                if (m_touchMovement.magnitude > m_minSwipeDistance)
-                    OnSwipe();
+                if (m_touchMovement.magnitude > m_minDragDistance)
+                {
+                    OnDrag();
+                    Debug.Log("Drag detected");
+                }
 
             }
             else if(touch.phase == TouchPhase.Ended)
-                OnSwipeEnd();
+            {
+                if(m_touchMovement.magnitude > m_minSwipeDistance)
+                {
+                    OnSwipe();
+                    Debug.Log("Swipe detected");
+                }
+                else if(Time.time < m_timeTapMax)
+                {
+                    OnTap();
+                    Debug.Log("Tap detected");
+                }
+                    
+            }
+                
 
         }
     }
