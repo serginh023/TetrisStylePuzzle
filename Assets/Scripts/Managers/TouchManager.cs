@@ -8,6 +8,7 @@ public class TouchManager : MonoBehaviour
     public delegate void TouchEventHandler(Vector2 swipe);
 
     public static event TouchEventHandler SwipeEvent;
+    public static event TouchEventHandler SwipeEndEvent;
 
     Vector2 m_touchMovement;
     int m_minSwipeDistance = 10;
@@ -18,6 +19,12 @@ public class TouchManager : MonoBehaviour
             SwipeEvent(m_touchMovement);
     }
 
+    void OnSwipeEnd()
+    {
+        if (SwipeEndEvent != null)
+            SwipeEndEvent(m_touchMovement);
+    }
+
     public Text mDiagnosticText1;
     public Text mDiagnosticText2;
 
@@ -25,11 +32,11 @@ public class TouchManager : MonoBehaviour
 
     void Diagnostic(string text1, string text2)
     {
-        mDiagnosticText1.gameObject.SetActive(m_useDiagnostic);
-        mDiagnosticText2.gameObject.SetActive(m_useDiagnostic);
-
         if (mDiagnosticText1 && mDiagnosticText2)
         {
+            mDiagnosticText1.gameObject.SetActive(m_useDiagnostic);
+            mDiagnosticText2.gameObject.SetActive(m_useDiagnostic);
+
             mDiagnosticText1.text = text1;
             mDiagnosticText2.text = text2;
         }
@@ -40,13 +47,9 @@ public class TouchManager : MonoBehaviour
         string direction = "";
 
         if(Mathf.Abs(swipeMovement.x) > Mathf.Abs(swipeMovement.y))
-        {
             direction = (swipeMovement.x >= 0) ? "right" : "left";
-        }
         else
-        {
             direction = (swipeMovement.y >= 0) ? "up" : "down";
-        }
 
         return direction;
     }
@@ -62,20 +65,18 @@ public class TouchManager : MonoBehaviour
         {
             Touch touch = Input.touches[0];
             if(touch.phase == TouchPhase.Began)
-            {
                 m_touchMovement = Vector2.zero;
-                Diagnostic("", "");
-            }
+
             else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
             {
                 m_touchMovement += touch.deltaPosition;
 
-                if(m_touchMovement.magnitude > m_minSwipeDistance)
-                {
+                if (m_touchMovement.magnitude > m_minSwipeDistance)
                     OnSwipe();
-                    Diagnostic("Swipe DetectedADASFSADFDSFSAFASFASFSAF", m_touchMovement.ToString() + " " + SwipeDiagnostic(m_touchMovement));
-                }
+
             }
+            else if(touch.phase == TouchPhase.Ended)
+                OnSwipeEnd();
 
         }
     }
