@@ -14,10 +14,10 @@ public class TouchManager : MonoBehaviour
     Vector2 m_touchMovement;
 
     [Range(50, 150)][SerializeField]
-    int m_minDragDistance = 100;
+    public int m_minDragDistance = 100;
 
-    [Range(50, 150)][SerializeField]
-    int m_minSwipeDistance = 200;
+    [Range(20, 150)][SerializeField]
+    public int m_minSwipeDistance = 50;
 
     [Range(.01f, .5f)][SerializeField]
     int m_timeTapWindow = 200;
@@ -80,10 +80,12 @@ public class TouchManager : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.touches[0];
+
             if(touch.phase == TouchPhase.Began)
             {
                 m_touchMovement = Vector2.zero;
                 m_timeTapMax = Time.time + m_timeTapWindow;
+                Diagnostic("", "");
             }
 
             else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
@@ -93,7 +95,7 @@ public class TouchManager : MonoBehaviour
                 if (m_touchMovement.magnitude > m_minDragDistance)
                 {
                     OnDrag();
-                    Debug.Log("Drag detected");
+                    Diagnostic("Swipe detected", touch.position.x + ", " + touch.position.y + " " + SwipeDiagnostic(touch.position));
                 }
 
             }
@@ -102,12 +104,13 @@ public class TouchManager : MonoBehaviour
                 if(m_touchMovement.magnitude > m_minSwipeDistance)
                 {
                     OnSwipe();
-                    Debug.Log("Swipe detected");
+                    Diagnostic("Drag detected", touch.position.x + ", " + touch.position.y + " " + SwipeDiagnostic(touch.position));
                 }
                 else if(Time.time < m_timeTapMax)
                 {
                     OnTap();
-                    Debug.Log("Tap detected");
+
+                    Diagnostic("Tap detected ", touch.position.x + ", " + touch.position.y + " " + SwipeDiagnostic(touch.position));
                 }
                     
             }
