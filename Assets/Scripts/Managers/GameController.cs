@@ -301,7 +301,7 @@ public class GameController : MonoBehaviour
     {
         Debug.Log("Restarted");
         Time.timeScale = (m_isPaused) ? 0 : 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
     }
 
     void PlaySound(AudioClip audioClip, float volmultiplier = .8f)
