@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UnityEngine.VFX;
 
 public class GameController : MonoBehaviour
@@ -19,6 +20,8 @@ public class GameController : MonoBehaviour
     Ghost m_ghost;
     [SerializeField]
     Holder m_holder;
+    [SerializeField]
+    GameObject[] FXObjects;
 
     //shape ativo
     Shape m_activeShape;
@@ -300,8 +303,9 @@ public class GameController : MonoBehaviour
     public void Restart()
     {
         Debug.Log("Restarted");
-        Time.timeScale = (m_isPaused) ? 0 : 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+        TogglePause();
+        int index = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(index);
     }
 
     void PlaySound(AudioClip audioClip, float volmultiplier = .8f)
@@ -330,6 +334,7 @@ public class GameController : MonoBehaviour
             m_soundManager.m_musicSource.volume = (m_isPaused) ? m_soundManager.m_musicVolume * .25f : m_soundManager.m_musicVolume;
 
         Time.timeScale = (m_isPaused) ? 0 : 1;
+        Debug.Log("Time.timeScale " + Time.timeScale);
 
     }
 
