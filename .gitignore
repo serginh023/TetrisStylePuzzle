@@ -65,3 +65,6 @@ crashlytics-build.properties
 
 .vscode/settings.json
 ProjectSettings/ProjectVersion.txt
+
+#Unity Scene Template
+/ProjectSettings/SceneTemplateSettings.json
