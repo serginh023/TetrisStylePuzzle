@@ -68,14 +68,14 @@ public class Board : MonoBehaviour
 
     public void StoreShapeInGrid(Shape shape)
     {
-        if(shape == null)
+        if(shape == default)
             return;
-        else 
-            foreach (Transform child in shape.transform)
-            {
-                Vector2 pos = Vectorf.Round(child.position);
-                m_grid[(int)pos.x, (int)pos.y] = child;
-            }
+        
+        foreach (Transform child in shape.transform)
+        {
+            Vector2 pos = Vectorf.Round(child.position);
+            m_grid[(int)pos.x, (int)pos.y] = child;
+        }
         
     }
 
