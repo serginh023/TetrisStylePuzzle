@@ -23,11 +23,11 @@ public class Spawner : MonoBehaviour
 
     Shape GetRandomShape()
     {
-        int i = (int)Random.Range(0, m_allShapes.Length);
+        var i = Random.Range(0, m_allShapes.Length);
         if (m_allShapes[i])
             return m_allShapes[i];
-        else
-            Debug.LogWarning("WARNING! Invalid shape in spawner.");
+        
+        Debug.LogWarning("WARNING! Invalid shape in spawner.");
 
         return null;
     }
@@ -66,7 +66,7 @@ public class Spawner : MonoBehaviour
         for(int i = 0; i < m_queuedShapes.Length; i++)
             if (!m_queuedShapes[i])
             {
-                m_queuedShapes[i] = Instantiate(GetRandomShape(), transform.position, Quaternion.identity) as Shape;
+                m_queuedShapes[i] = Instantiate(GetRandomShape(), transform.position, Quaternion.identity);
                 m_queuedShapes[i].transform.position = m_queueXforms[i].transform.position + m_queuedShapes[i].m_QueueOffSet;
                 m_queuedShapes[i].transform.localScale = new Vector3(m_queueScale, m_queueScale, m_queueScale);
             }

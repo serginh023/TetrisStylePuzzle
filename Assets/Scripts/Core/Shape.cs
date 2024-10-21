@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Shape : MonoBehaviour
 {
     bool m_canRotate = true;
-    public Vector3 m_QueueOffSet;
+    public Vector3 m_QueueOffSet;//TODO remove this and put into Spawner
     public GameObject[] m_glowSquareFX;
 
     private void Awake()

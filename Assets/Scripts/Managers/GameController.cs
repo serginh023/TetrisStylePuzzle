@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using UnityEngine.VFX;
 
 public class GameController : MonoBehaviour
 {
@@ -120,9 +116,8 @@ public class GameController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (m_ghost)
+        if (m_ghost && m_activeShape)
             m_ghost.DrawGhost(m_activeShape, m_gameBoard);
-
     }
 
     void PlayerInput()
@@ -192,7 +187,11 @@ public class GameController : MonoBehaviour
             if (m_gameBoard.IsOverLimit(m_activeShape))
                 GameOver();
             else
+            {
                 LandShape();
+                //TODO Destroy gameObject
+                DestroyShape(m_activeShape.gameObject);
+            }
     }
 
     private void Rotate()
@@ -396,6 +395,11 @@ public class GameController : MonoBehaviour
             swipeDir = (swipeMovement.y >= 0) ? Direction.up : Direction.down;
 
         return swipeDir;
+    }
+
+    void DestroyShape(GameObject go)
+    {
+        Destroy(go);
     }
 
     private void OnEnable()
