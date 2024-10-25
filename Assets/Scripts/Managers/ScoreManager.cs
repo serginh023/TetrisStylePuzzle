@@ -1,101 +1,93 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class ScoreManager : MonoBehaviour
+namespace Managers
 {
-    int m_score = 0;
-    int m_lines;
-    public int m_level = 0;
-
-    public int m_linesperLevel = 5;
-
-    const int m_minLines = 1;
-    const int m_maxLines = 4;
-
-    public Text m_linesText;
-    public Text m_levelText;
-    public Text m_scoreText;
-
-    public bool m_didLevelUp = false;
-
-    [SerializeField]
-    ParticlePlayer m_levelUpFX;
-
-    public void ScoreLines(int n)
+    public class ScoreManager : MonoBehaviour
     {
-        m_didLevelUp = false;
-        n = Mathf.Clamp(n, m_minLines, m_maxLines);
+        private int score;
+        private int lines;
+        private int level;
+        private int linesPerLevel = 5;
+        private const int m_minLines = 1;
+        private const int m_maxLines = 4;
+        private Text linesText;
+        private Text levelText;
+        private Text scoreText;
+        private bool didLevelUp;
 
-        switch (n)
+        public bool DidLevelUp => DidLevelUp;
+
+        [SerializeField] ParticlePlayer m_levelUpFX;
+
+        private void Start()
         {
-            case 1:
-                m_score += 40 * m_level;
-                break;
-            case 2:
-                m_score += 100 * m_level;
-                break;
-            case 3:
-                m_score += 300 * m_level;
-                break;
-            case 4:
-                m_score += 1200 * m_level;
-                break;
-            default:
-                break;
+            Reset();
         }
 
-        m_lines -= n;
-        if(m_lines <= 0)
-            LevelUp();
+        public void ScoreLines(int n)
+        {
+            didLevelUp = false;
+            n = Mathf.Clamp(n, m_minLines, m_maxLines);
 
-        UpdateUserInterface();
-    }
+            switch (n)
+            {
+                case 1:
+                    score += 40 * level;
+                    break;
+                case 2:
+                    score += 100 * level;
+                    break;
+                case 3:
+                    score += 300 * level;
+                    break;
+                case 4:
+                    score += 1200 * level;
+                    break;
+                default:
+                    break;
+            }
+            lines -= n;
+            if(lines <= 0)
+                LevelUp();
+            UpdateUserInterface();
+        }
 
+        public void Reset()
+        {
+            level = 1;
+            lines = linesPerLevel * level;
+            UpdateUserInterface();
+        }
+    
+        private void UpdateUserInterface()
+        {
+            if (linesText)
+                linesText.text = lines.ToString();
+            if (levelText)
+                levelText.text = level.ToString();
+            if (scoreText)
+                scoreText.text = PadZero(score, 7);
+        
+            Debug.Log("score: " + score);
+        }
 
-    public void Reset()
-    {
-        m_level = 1;
-        m_lines = m_linesperLevel * m_level;
-        UpdateUserInterface();
-    }
+        private string PadZero(int n, int padDigits)
+        {
+            var str = n.ToString();
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        Reset();
-    }
+            while(str.Length < padDigits)
+                str = "0" + str;
 
-    // Update is called once per frame
-    void UpdateUserInterface()
-    {
-        if (m_linesText)
-            m_linesText.text = m_lines.ToString();
-        if (m_levelText)
-            m_levelText.text = m_level.ToString();
-        if (m_scoreText)
-            m_scoreText.text = padZero(m_score, 7);
+            return str;
+        }
 
-
-        Debug.Log("score: " + m_score.ToString());
-    }
-
-    string padZero(int n, int padDigits)
-    {
-        string str = n.ToString();
-
-        while(str.Length < padDigits)
-            str = "0" + str;
-
-        return str;
-    }
-
-    public void LevelUp()
-    {
-        m_level++;
-        m_lines = m_linesperLevel * m_level;
-        m_didLevelUp = true;
-        m_levelUpFX.Play();
+        private void LevelUp()
+        {
+            level++;
+            lines = linesPerLevel * level;
+            didLevelUp = true;
+            m_levelUpFX.Play();
+        }
     }
 }
