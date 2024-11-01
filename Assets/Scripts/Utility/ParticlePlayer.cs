@@ -1,24 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ParticlePlayer : MonoBehaviour
+namespace Utility
 {
-    public ParticleSystem[] allParticles;
-
-    // Start is called before the first frame update
-    void Start()
+    public class ParticlePlayer : MonoBehaviour
     {
-        allParticles = GetComponentsInChildren<ParticleSystem>();
-    }
+        public ParticleSystem[] allParticles;
 
-    public void Play()
-    {
-        foreach(ParticleSystem ps in allParticles)
+        public void Play()
         {
-            ps.Stop();
-            ps.Play();
+            foreach(ParticleSystem ps in allParticles)
+            {
+                ps.Stop();
+                ps.Play();
+            }
         }
-    }
     
+    }
 }

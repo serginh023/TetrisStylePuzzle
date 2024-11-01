@@ -1,73 +1,94 @@
 ﻿using System.Collections;
+using Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utility;
 
 namespace Managers
 {
-    public enum Direction { none, left, right, up, down };
+    public enum Direction { None, Left, Right, Up, Down };
 
     public class GameController : MonoBehaviour
     {
+        #region fields
         [Header("Game Objects")]
-        [SerializeField] Ghost Ghost;
-        [SerializeField] Board GameBoard;
-        [SerializeField] Holder Holder;
-        [SerializeField] Spawner Spawner;
-        [SerializeField] GameObject[] FXObjects;
-        [Header("Managers")]
-        [SerializeField] SoundManager SoundManager;
-        [SerializeField] ScoreManager ScoreManager;
-        [SerializeField] ParticlePlayer GameOverFX;
-        [Header("Movement")]
-        [SerializeField] float DropRate = .9f;
-        [SerializeField] [Range(0.02f, 1f)] float KeyRepeatRateLeftRight = 0.065f;
-        [SerializeField] [Range(0.01f, 1f)] float KeyRepeatRateDown = 0.05f;
-        [SerializeField] [Range(0.02f, 1f)] float KeyRepeatRateRotate = 0.065f;
-        [Header("Time")]
-        [SerializeField] [Range(.05f, 1f)] private float MinTimeToDrag = .15f;
-        [SerializeField] [Range(.05f, 1f)] private float MinTimeToSwipe = .3f;
+        [SerializeField] private Ghost ghost;
+        [SerializeField] private Holder holder;
+        [SerializeField] private Board gameBoard;
+        [SerializeField] private Spawner spawner;
+        [SerializeField] private GameObject[] fxObjects;
+        
+        [Header("Panels")]
+        [SerializeField] private GameObject pausePanel;
+        [SerializeField] private GameObject gameOverPanel;
 
-        private bool gameOver = false;
+        [Header("Managers")]
+        [SerializeField] private SoundManager soundManager;
+        [SerializeField] private ScoreManager scoreManager;
+        [SerializeField] private ParticlePlayer gameOverFX;
+        
+        [Header("Movement")]
+        [SerializeField] float dropRate = .9f;
+        [SerializeField] [Range(0.01f, 1f)] float keyRepeatRateDown = 0.05f;
+        [SerializeField] [Range(0.02f, 1f)] float keyRepeatRateRotate = 0.065f;
+        [SerializeField] [Range(0.02f, 1f)] float keyRepeatRateLeftRight = 0.065f;
+
+        [Header("Time")]
+        [SerializeField] [Range(.05f, 1f)] private float minTimeToDrag = .15f;
+        [SerializeField] [Range(.05f, 1f)] private float minTimeToSwipe = .3f;
+
+        //Game Control
+        private bool gameOver;
         private bool clockwise = true;
-        private bool isPaused = false;
-        private bool m_didTap = false;
-        private float dropRateModded;
-        private float timeToDrop = 0f;
-        private float timeToNextKeyLeftRight;
+        private bool isPaused;
+        private bool didTap;
+        
+        // private float dropRateModded;
+        //Times
+        private float timeToDrop;
         private float timeToNextKeyDown;
         private float timeToNextKeyRotate;
+        private float timeToNextKeyLeftRight;
         private float timeToNextDrag;
         private float timeToNextSwipe;
+        
+        //Objects
         private Shape activeShape;
-        private GameObject gameOverPanel;
-        private GameObject pausePanel;
         private IconToggle rotIconToggle;
-        private Direction dragDirection = Direction.none;
-        private Direction swipeDirection = Direction.none;
+        private Camera mainCamera;
+        
+        //Direction
+        private Direction dragDirection = Direction.None;
+        private Direction swipeDirection = Direction.None;
+        
+        // public 
+        public Board GameBoard => gameBoard;
+        #endregion
 
         #region Monobehaviour
         private void Start()
         {
-            timeToNextKeyLeftRight = Time.time + KeyRepeatRateLeftRight;
-            timeToNextKeyDown = Time.time + KeyRepeatRateDown;
-            timeToNextKeyRotate = Time.time + KeyRepeatRateRotate;
+            mainCamera = Camera.main;
+            timeToNextKeyLeftRight = Time.time + keyRepeatRateLeftRight;
+            timeToNextKeyDown = Time.time + keyRepeatRateDown;
+            timeToNextKeyRotate = Time.time + keyRepeatRateRotate;
 
-            if (!GameBoard)
+            if (!gameBoard)
                 Debug.LogWarning("WARNING! There is no board definied!");
 
-            if (!SoundManager)
+            if (!soundManager)
                 Debug.LogWarning("WARNING! There is no soundManager definied!");
 
-            if (!ScoreManager)
+            if (!scoreManager)
                 Debug.LogWarning("WARNING! There is no scoreManager definied!");
 
-            if (!Spawner)
+            if (!spawner)
                 Debug.LogWarning("WARNING! There is no spawner definied!");
             else
             {
-                Spawner.transform.position = Vectorf.Round(Spawner.transform.position);
+                spawner.transform.position = Vectorf.Round(spawner.transform.position);
                 if (!activeShape)
-                    activeShape = Spawner.SpawnShape();
+                    activeShape = spawner.SpawnShape();
             }
 
         }
@@ -75,7 +96,7 @@ namespace Managers
         // Update is called once per frame
         private void Update()
         {
-            if (!GameBoard || !Spawner || !activeShape || gameOver || !SoundManager)
+            if (!gameBoard || !spawner || !activeShape || gameOver || !soundManager)
                 return;
 
             PlayerInput();
@@ -83,8 +104,8 @@ namespace Managers
 
         private void LateUpdate()
         {
-            if (Ghost && activeShape)
-                Ghost.DrawGhost(activeShape, GameBoard);
+            if (ghost && activeShape)
+                ghost.DrawGhost(activeShape, gameBoard);
         }
     
         private void OnEnable()
@@ -118,30 +139,30 @@ namespace Managers
             #endregion
 
             #region MOBILE
-            else if ( (dragDirection == Direction.right && Time.time > timeToNextDrag)
+            else if ( (dragDirection == Direction.Right && Time.time > timeToNextDrag)
                       ||
-                      (swipeDirection == Direction.right && Time.time > timeToNextSwipe) )
+                      (swipeDirection == Direction.Right && Time.time > timeToNextSwipe) )
             {
                 MoveRight();
-                timeToNextDrag = Time.time + MinTimeToDrag;
-                timeToNextSwipe = Time.time + MinTimeToSwipe;
+                timeToNextDrag = Time.time + minTimeToDrag;
+                timeToNextSwipe = Time.time + minTimeToSwipe;
             }
-            else if ( (dragDirection == Direction.left && Time.time > timeToNextDrag)
+            else if ( (dragDirection == Direction.Left && Time.time > timeToNextDrag)
                       ||
-                      (swipeDirection == Direction.left && Time.time > timeToNextSwipe) )
+                      (swipeDirection == Direction.Left && Time.time > timeToNextSwipe) )
             {
                 MoveLeft();
-                timeToNextDrag = Time.time + MinTimeToDrag;
-                timeToNextSwipe = Time.time + MinTimeToSwipe;
+                timeToNextDrag = Time.time + minTimeToDrag;
+                timeToNextSwipe = Time.time + minTimeToSwipe;
             }
-            else if ( m_didTap || (swipeDirection == Direction.up && Time.time > timeToNextSwipe) )
+            else if ( didTap || (swipeDirection == Direction.Up && Time.time > timeToNextSwipe) )
             {
                 Rotate();
-                timeToNextSwipe = Time.time + MinTimeToSwipe;
+                timeToNextSwipe = Time.time + minTimeToSwipe;
             }
-            else if ( (dragDirection == Direction.down && Time.time > timeToNextDrag)
+            else if ( (dragDirection == Direction.Down && Time.time > timeToNextDrag)
                       ||
-                      (swipeDirection == Direction.down && Time.time > timeToNextSwipe) )
+                      (swipeDirection == Direction.Down && Time.time > timeToNextSwipe) )
             {
                 MoveDown();
             }
@@ -154,15 +175,15 @@ namespace Managers
             else if (Input.GetButtonDown("Hold"))
                 Hold();
 
-            dragDirection = Direction.none;
-            swipeDirection = Direction.none;
-            m_didTap = false;
+            dragDirection = Direction.None;
+            swipeDirection = Direction.None;
+            didTap = false;
 
         }
     
         private void TapHandler(Vector2 swipeMovement)
         {
-            m_didTap = true;
+            didTap = true;
         }
 
         private void DragHandler(Vector2 dragMovement)
@@ -179,12 +200,12 @@ namespace Managers
         #region Movement
         private void MoveDown()
         {
-            timeToDrop = Time.time + DropRate;
-            timeToNextKeyDown = Time.time + KeyRepeatRateDown;
+            timeToDrop = Time.time + dropRate;
+            timeToNextKeyDown = Time.time + keyRepeatRateDown;
             activeShape.MoveDown();
 
-            if (!GameBoard.IsValidPosition(activeShape))
-                if (GameBoard.IsOverLimit(activeShape))
+            if (!gameBoard.IsValidPosition(activeShape))
+                if (gameBoard.IsOverLimit(activeShape))
                     GameOver();
                 else
                 {
@@ -196,41 +217,41 @@ namespace Managers
 
         private void Rotate()
         {
-            timeToNextKeyRotate = Time.time + KeyRepeatRateRotate;
+            timeToNextKeyRotate = Time.time + keyRepeatRateRotate;
             activeShape.RotateClockwise(clockwise);
-            if (!GameBoard.IsValidPosition(activeShape))
+            if (!gameBoard.IsValidPosition(activeShape))
             {
                 activeShape.RotateClockwise(!clockwise);
-                PlaySound(SoundManager.m_errorSound, .8f);
+                PlaySound(soundManager.m_errorSound, .8f);
             }
             else
-                PlaySound(SoundManager.m_moveSound, .8f);
+                PlaySound(soundManager.m_moveSound, .8f);
         }
 
         private void MoveRight()
         {
-            timeToNextKeyLeftRight += Time.time + KeyRepeatRateLeftRight;
+            timeToNextKeyLeftRight += Time.time + keyRepeatRateLeftRight;
             activeShape.MoveRight();
-            if (!GameBoard.IsValidPosition(activeShape))
+            if (!gameBoard.IsValidPosition(activeShape))
             {
                 activeShape.MoveLeft();
-                PlaySound(SoundManager.m_errorSound, .8f);
+                PlaySound(soundManager.m_errorSound, .8f);
             }
             else
-                PlaySound(SoundManager.m_moveSound, .8f);
+                PlaySound(soundManager.m_moveSound, .8f);
         }
 
         private void MoveLeft()
         {
-            timeToNextKeyLeftRight += Time.time + KeyRepeatRateLeftRight;
+            timeToNextKeyLeftRight += Time.time + keyRepeatRateLeftRight;
             activeShape.MoveLeft();
-            if (!GameBoard.IsValidPosition(activeShape))
+            if (!gameBoard.IsValidPosition(activeShape))
             {
                 activeShape.MoveRight();
-                PlaySound(SoundManager.m_errorSound, .8f);
+                PlaySound(soundManager.m_errorSound, .8f);
             }
             else
-                PlaySound(SoundManager.m_moveSound, .8f);
+                PlaySound(soundManager.m_moveSound, .8f);
         }
     
         //Refacture this method
@@ -242,39 +263,40 @@ namespace Managers
             {
 
                 activeShape.MoveUp();
-                GameBoard.StoreShapeInGrid(activeShape);
+                gameBoard.StoreShapeInGrid(activeShape);
                 activeShape.LandShapeFX();
 
-                if (Ghost)
-                    Ghost.Reset();
+                if (ghost)
+                    ghost.Reset();
 
-                if (Holder)
-                    Holder.m_canRelease = true;
+                if (holder)
+                    holder.m_canRelease = true;
 
-                activeShape = Spawner.SpawnShape();
+                activeShape = spawner.SpawnShape();
 
-                timeToNextKeyLeftRight = Time.time + KeyRepeatRateLeftRight;
-                timeToNextKeyDown = Time.time + KeyRepeatRateDown;
-                timeToNextKeyRotate = Time.time + KeyRepeatRateRotate;
+                timeToNextKeyLeftRight = Time.time + keyRepeatRateLeftRight;
+                timeToNextKeyDown = Time.time + keyRepeatRateDown;
+                timeToNextKeyRotate = Time.time + keyRepeatRateRotate;
 
-                GameBoard.StartCoroutine("ClearAllRows");
+                //TODO: remove this call
+                gameBoard.StartCoroutine("ClearAllRows");
 
-                PlaySound(SoundManager.m_dropSound, .8f);
+                PlaySound(soundManager.m_dropSound, .8f);
 
-                if (GameBoard.m_completedRows > 0)
+                if (gameBoard.CompletedRows > 0)
                 {
-                    ScoreManager.ScoreLines(GameBoard.m_completedRows);
+                    scoreManager.ScoreLines(gameBoard.CompletedRows);
 
-                    if (ScoreManager.m_didLevelUp)
+                    if (scoreManager.DidLevelUp)
                     {
-                        PlaySound(SoundManager.m_levelUpVocalClip, .75f);
-                        dropRateModded = DropRate - Mathf.Clamp(((float)ScoreManager.m_level - 1) * 0.05f, 0.1f, 1f);
+                        PlaySound(soundManager.m_levelUpVocalClip, .75f);
+                        // dropRateModded = DropRate - Mathf.Clamp(((float)ScoreManager.m_level - 1) * 0.05f, 0.1f, 1f);
                     }
                     else
-                    if (GameBoard.m_completedRows > 1)
-                        PlaySound(SoundManager.GetRandomClip(SoundManager.m_vocalClips), .8f);
+                    if (gameBoard.CompletedRows > 1)
+                        PlaySound(soundManager.GetRandomClip(soundManager.m_vocalClips), .8f);
 
-                    PlaySound(SoundManager.m_clearRowSound, .8f);
+                    PlaySound(soundManager.m_clearRowSound, .8f);
                 }
 
             }
@@ -290,21 +312,20 @@ namespace Managers
         #endregion
 
         #region Game Control
-    
         private void GameOver()
         {
             activeShape.MoveUp();
             gameOver = true;
             Debug.LogWarning(activeShape + " Shape is over the limit check");
-            PlaySound(SoundManager.m_gameOverSound, .9f);
-            PlaySound(SoundManager.m_gameOverVocalClip, .9f);
+            PlaySound(soundManager.m_gameOverSound, .9f);
+            PlaySound(soundManager.m_gameOverVocalClip, .9f);
             StartCoroutine(GameOverRoutine());
         }
 
         private IEnumerator GameOverRoutine()
         {
-            if (GameOverFX)
-                GameOverFX.Play();
+            if (gameOverFX)
+                gameOverFX.Play();
 
             yield return new WaitForSeconds(.4f);
 
@@ -329,8 +350,8 @@ namespace Managers
 
             pausePanel.SetActive(isPaused);
 
-            if (SoundManager)
-                SoundManager.m_musicSource.volume = (isPaused) ? SoundManager.m_musicVolume * .25f : SoundManager.m_musicVolume;
+            if (soundManager)
+                soundManager.m_musicSource.volume = (isPaused) ? soundManager.m_musicVolume * .25f : soundManager.m_musicVolume;
 
             Time.timeScale = (isPaused) ? 0 : 1;
             Debug.Log("Time.timeScale " + Time.timeScale);
@@ -339,51 +360,51 @@ namespace Managers
 
         public void Hold()
         {
-            if (!Holder)
+            if (!holder)
                 return;
 
-            if (!Holder.m_heldShape)
+            if (!holder.m_heldShape)
             {
-                Holder.Catch(activeShape);
-                activeShape = Spawner.SpawnShape();
-                PlaySound(SoundManager.m_holdClip);
-                if (Ghost)
-                    Ghost.Reset();
+                holder.Catch(activeShape);
+                activeShape = spawner.SpawnShape();
+                PlaySound(soundManager.m_holdClip);
+                if (ghost)
+                    ghost.Reset();
             }
-            else if (Holder.m_canRelease)
+            else if (holder.m_canRelease)
             {
                 Shape temp = activeShape;
-                activeShape = Holder.Release();
-                activeShape.transform.position = Spawner.transform.position;
-                Holder.Catch(temp);
-                PlaySound(SoundManager.m_holdClip);
-                if (Ghost)
-                    Ghost.Reset();
+                activeShape = holder.Release();
+                activeShape.transform.position = spawner.transform.position;
+                holder.Catch(temp);
+                PlaySound(soundManager.m_holdClip);
+                if (ghost)
+                    ghost.Reset();
             }
             else
             {
                 Debug.LogWarning("GAMECONTROLLER! Wait for cool down!");
-                PlaySound(SoundManager.m_errorSound);
+                PlaySound(soundManager.m_errorSound);
             }
 
         }
 
         private void PlaySound(AudioClip audioClip, float volmultiplier = .8f)
         {
-            if (SoundManager.m_fxEnabled && audioClip)
-                AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position, Mathf.Clamp( SoundManager.m_fxVolume * volmultiplier, 0.05f, 1f ));
+            if (soundManager.m_fxEnabled && audioClip)
+                AudioSource.PlayClipAtPoint(audioClip, mainCamera.transform.position, Mathf.Clamp( soundManager.m_fxVolume * volmultiplier, 0.05f, 1f ));
         }
 
         private Direction GetDirection(Vector2 swipeMovement)
         {
-            var swipeDir = Direction.none;
+            var swipeDir = Direction.None;
 
             //horizontal
             if (Mathf.Abs(swipeMovement.x) > Mathf.Abs(swipeMovement.y))
-                swipeDir = (swipeMovement.x >= 0) ? Direction.right : Direction.left;
+                swipeDir = (swipeMovement.x >= 0) ? Direction.Right : Direction.Left;
             //vertical
             else
-                swipeDir = (swipeMovement.y >= 0) ? Direction.up : Direction.down;
+                swipeDir = (swipeMovement.y >= 0) ? Direction.Up : Direction.Down;
 
             return swipeDir;
         }

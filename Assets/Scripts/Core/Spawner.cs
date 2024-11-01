@@ -1,111 +1,107 @@
-﻿//using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
+using Utility;
 
-public class Spawner : MonoBehaviour
+namespace Core
 {
-    public Shape[] m_allShapes;
-
-    public Transform[] m_queueXforms = new Transform[3];
-
-    Shape[] m_queuedShapes = new Shape[3];
-
-    float m_queueScale = .5f;
-
-    [SerializeField]
-    ParticlePlayer m_spawnFx;
-
-    void Awake()
+    public class Spawner : MonoBehaviour
     {
-        InitQueue();
-    }
-
-    Shape GetRandomShape()
-    {
-        var i = Random.Range(0, m_allShapes.Length);
-        if (m_allShapes[i])
-            return m_allShapes[i];
+        [SerializeField] ParticlePlayer spawnFx;
+        [SerializeField] private Shape[] allShapes;
+        [SerializeField] private Transform[] queueXforms;
         
-        Debug.LogWarning("WARNING! Invalid shape in spawner.");
+        private const float queueScale = .5f;
+        private Shape[] queuedShapes = new Shape[3];
 
-        return null;
-    }
+        private void Awake()
+        {
+            InitQueue();
+        }
 
-    public Shape SpawnShape()
-    {
-        Shape shape = null;
-        shape = GetQueuedShape();//shape = Instantiate(GetRandomShape(), transform.position, Quaternion.identity) as Shape;
-        shape.transform.position = transform.position;
-        StartCoroutine(GrowShape(shape, transform.position, .25f));
-
-        if (m_spawnFx)
-            m_spawnFx.Play();
-
-        if (shape)
-            return shape;
-        else
+        private Shape GetRandomShape()
+        {
+            var i = Random.Range(0, allShapes.Length);
+            if (allShapes[i])
+                return allShapes[i];
+        
             Debug.LogWarning("WARNING! Invalid shape in spawner.");
 
-        return null;
-    }
-
-
-    void InitQueue()
-    {
-        for(int i = 0; i < m_queuedShapes.Length; i++)
-        {
-            m_queuedShapes[i] = null;
-        }
-        FillQueue();
-    }
-
-
-    void FillQueue()
-    {
-        for(int i = 0; i < m_queuedShapes.Length; i++)
-            if (!m_queuedShapes[i])
-            {
-                m_queuedShapes[i] = Instantiate(GetRandomShape(), transform.position, Quaternion.identity);
-                m_queuedShapes[i].transform.position = m_queueXforms[i].transform.position + m_queuedShapes[i].m_QueueOffSet;
-                m_queuedShapes[i].transform.localScale = new Vector3(m_queueScale, m_queueScale, m_queueScale);
-            }
-    }
-
-    Shape GetQueuedShape()
-    {
-        Shape firstShape = null;
-
-        if (m_queuedShapes[0])
-            firstShape = m_queuedShapes[0];
-
-        for(int i = 1; i < m_queuedShapes.Length; i++)
-        {
-            m_queuedShapes[i - 1] = m_queuedShapes[i];
-            m_queuedShapes[i - 1].transform.position = m_queueXforms[i - 1].transform.position + m_queuedShapes[i].m_QueueOffSet;
+            return null;
         }
 
-        m_queuedShapes[m_queuedShapes.Length - 1] = null;
-
-        FillQueue();
-
-        return firstShape;
-    }
-
-    IEnumerator GrowShape(Shape shape, Vector3 position, float growTime = .5f)
-    {
-        float size = 0f;
-        growTime = Mathf.Clamp(growTime, 0.1f, 1.5f);
-        float sizeDelta = Time.deltaTime / growTime;
-
-        while (size < 1f)
+        public Shape SpawnShape()
         {
-            shape.transform.localScale = new Vector3(size, size, size);
-            size += sizeDelta;
+            var shape = GetQueuedShape(); //shape = Instantiate(GetRandomShape(), transform.position, Quaternion.identity) as Shape;
             shape.transform.position = transform.position;
-            yield return null;
+            StartCoroutine(GrowShape(shape, .25f));
+
+            if (spawnFx)
+                spawnFx.Play();
+            if (shape)
+                return shape;
+            
+            Debug.LogWarning("WARNING! Invalid shape in spawner.");
+
+            return null;
         }
 
-        shape.transform.localScale = Vector3.one;
+
+        private void InitQueue()
+        {
+            for(int i = 0; i < queuedShapes.Length; i++)
+            {
+                queuedShapes[i] = null;
+            }
+            FillQueue();
+        }
+
+
+        private void FillQueue()
+        {
+            for(var i = 0; i < queuedShapes.Length; i++)
+                if (!queuedShapes[i])
+                {
+                    queuedShapes[i] = Instantiate(GetRandomShape(), transform.position, Quaternion.identity);
+                    queuedShapes[i].transform.position = queueXforms[i].transform.position + queuedShapes[i].m_QueueOffSet;
+                    queuedShapes[i].transform.localScale = new Vector3(queueScale, queueScale, queueScale);
+                }
+        }
+
+        private Shape GetQueuedShape()
+        {
+            Shape firstShape = null;
+
+            if (queuedShapes[0])
+                firstShape = queuedShapes[0];
+
+            for(var i = 1; i < queuedShapes.Length; i++)
+            {
+                queuedShapes[i - 1] = queuedShapes[i];
+                queuedShapes[i - 1].transform.position = queueXforms[i - 1].transform.position + queuedShapes[i].m_QueueOffSet;
+            }
+
+            queuedShapes[queuedShapes.Length - 1] = null;
+
+            FillQueue();
+
+            return firstShape;
+        }
+
+        private IEnumerator GrowShape(Shape shape, float growTime = .5f)
+        {
+            var size = 0f;
+            growTime = Mathf.Clamp(growTime, 0.1f, 1.5f);
+            var sizeDelta = Time.deltaTime / growTime;
+
+            while (size < 1f)
+            {
+                var shapeTransform = shape.transform;
+                shapeTransform.localScale = new Vector3(size, size, size);
+                size += sizeDelta;
+                shapeTransform.position = transform.position;
+                yield return null;
+            }
+            shape.transform.localScale = Vector3.one;
+        }
     }
 }
