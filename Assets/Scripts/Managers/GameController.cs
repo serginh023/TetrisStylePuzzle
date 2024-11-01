@@ -2,6 +2,7 @@
 using Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utility;
 
 namespace Managers
 {
@@ -17,6 +18,10 @@ namespace Managers
         [SerializeField] private Spawner spawner;
         [SerializeField] private GameObject[] fxObjects;
         
+        [Header("Panels")]
+        [SerializeField] private GameObject pausePanel;
+        [SerializeField] private GameObject gameOverPanel;
+
         [Header("Managers")]
         [SerializeField] private SoundManager soundManager;
         [SerializeField] private ScoreManager scoreManager;
@@ -49,8 +54,6 @@ namespace Managers
         
         //Objects
         private Shape activeShape;
-        private GameObject gameOverPanel;
-        private GameObject pausePanel;
         private IconToggle rotIconToggle;
         private Camera mainCamera;
         
@@ -275,6 +278,7 @@ namespace Managers
                 timeToNextKeyDown = Time.time + keyRepeatRateDown;
                 timeToNextKeyRotate = Time.time + keyRepeatRateRotate;
 
+                //TODO: remove this call
                 gameBoard.StartCoroutine("ClearAllRows");
 
                 PlaySound(soundManager.m_dropSound, .8f);

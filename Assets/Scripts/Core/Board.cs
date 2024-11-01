@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Utility;
 
 namespace Core
 {
@@ -11,8 +12,9 @@ namespace Core
     
         private int completedRows;
         private Transform[,] grid;
-        private Transform emptySprite;
-        private ParticlePlayer[] rowGlowFX;
+
+        [SerializeField] private Transform emptySprite;
+        [SerializeField] private ParticlePlayer[] rowGlowFX;
 
         public int CompletedRows => completedRows;
 

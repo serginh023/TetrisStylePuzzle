@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Utility;
 
 namespace Core
 {
@@ -7,9 +8,10 @@ namespace Core
     {
         [SerializeField] ParticlePlayer spawnFx;
         [SerializeField] private Shape[] allShapes;
-        private Transform[] queueXforms = new Transform[3];
+        [SerializeField] private Transform[] queueXforms;
+        
+        private const float queueScale = .5f;
         private Shape[] queuedShapes = new Shape[3];
-        private float queueScale = .5f;
 
         private void Awake()
         {
@@ -29,18 +31,16 @@ namespace Core
 
         public Shape SpawnShape()
         {
-            Shape shape = null;
-            shape = GetQueuedShape();//shape = Instantiate(GetRandomShape(), transform.position, Quaternion.identity) as Shape;
+            var shape = GetQueuedShape(); //shape = Instantiate(GetRandomShape(), transform.position, Quaternion.identity) as Shape;
             shape.transform.position = transform.position;
             StartCoroutine(GrowShape(shape, .25f));
 
             if (spawnFx)
                 spawnFx.Play();
-
             if (shape)
                 return shape;
-            else
-                Debug.LogWarning("WARNING! Invalid shape in spawner.");
+            
+            Debug.LogWarning("WARNING! Invalid shape in spawner.");
 
             return null;
         }
@@ -74,7 +74,7 @@ namespace Core
             if (queuedShapes[0])
                 firstShape = queuedShapes[0];
 
-            for(int i = 1; i < queuedShapes.Length; i++)
+            for(var i = 1; i < queuedShapes.Length; i++)
             {
                 queuedShapes[i - 1] = queuedShapes[i];
                 queuedShapes[i - 1].transform.position = queueXforms[i - 1].transform.position + queuedShapes[i].m_QueueOffSet;
@@ -95,9 +95,10 @@ namespace Core
 
             while (size < 1f)
             {
-                shape.transform.localScale = new Vector3(size, size, size);
+                var shapeTransform = shape.transform;
+                shapeTransform.localScale = new Vector3(size, size, size);
                 size += sizeDelta;
-                shape.transform.position = transform.position;
+                shapeTransform.position = transform.position;
                 yield return null;
             }
             shape.transform.localScale = Vector3.one;

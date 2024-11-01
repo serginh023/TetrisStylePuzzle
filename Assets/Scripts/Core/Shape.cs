@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Utility;
 
 public class Shape : MonoBehaviour
 {
@@ -61,7 +62,7 @@ public class Shape : MonoBehaviour
         int i = 0;
         //Transform[] transforms = GetComponentsInChildren<Transform>();
         //for(int i = 0; i < m_glowSquareFX.Length; i++)
-        foreach(Transform child in transform)//subistitui as duas linhas acima
+        foreach(Transform child in transform)//substitui as duas linhas acima
         {
             if (m_glowSquareFX[i])
             {

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Utility;
 
 namespace Managers
 {
@@ -16,7 +17,7 @@ namespace Managers
         private Text scoreText;
         private bool didLevelUp;
 
-        public bool DidLevelUp => DidLevelUp;
+        public bool DidLevelUp => didLevelUp;
 
         [SerializeField] ParticlePlayer m_levelUpFX;
 
