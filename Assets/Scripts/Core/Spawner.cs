@@ -6,10 +6,10 @@ namespace Core
 {
     public class Spawner : MonoBehaviour
     {
-        [SerializeField] ParticlePlayer spawnFx;
         [SerializeField] private Shape[] allShapes;
         [SerializeField] private Transform[] queueXforms;
-        
+        [SerializeField] private ParticlePlayer spawnFx;
+
         private const float queueScale = .5f;
         private Shape[] queuedShapes = new Shape[3];
 
@@ -45,16 +45,14 @@ namespace Core
             return null;
         }
 
-
         private void InitQueue()
         {
-            for(int i = 0; i < queuedShapes.Length; i++)
+            for(var i = 0; i < queuedShapes.Length; i++)
             {
                 queuedShapes[i] = null;
             }
             FillQueue();
         }
-
 
         private void FillQueue()
         {

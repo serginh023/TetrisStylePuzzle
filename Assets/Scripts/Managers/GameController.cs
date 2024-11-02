@@ -16,7 +16,6 @@ namespace Managers
         [SerializeField] private Holder holder;
         [SerializeField] private Board gameBoard;
         [SerializeField] private Spawner spawner;
-        [SerializeField] private GameObject[] fxObjects;
         
         [Header("Panels")]
         [SerializeField] private GameObject pausePanel;
@@ -60,9 +59,6 @@ namespace Managers
         //Direction
         private Direction dragDirection = Direction.None;
         private Direction swipeDirection = Direction.None;
-        
-        // public 
-        public Board GameBoard => gameBoard;
         #endregion
 
         #region Monobehaviour
@@ -204,15 +200,17 @@ namespace Managers
             timeToNextKeyDown = Time.time + keyRepeatRateDown;
             activeShape.MoveDown();
 
-            if (!gameBoard.IsValidPosition(activeShape))
-                if (gameBoard.IsOverLimit(activeShape))
-                    GameOver();
-                else
-                {
-                    LandShape();
-                    //TODO Destroy gameObject
-                    // DestroyShape(m_activeShape.gameObject);
-                }
+            if (gameBoard.IsValidPosition(activeShape)) return;
+            if (gameBoard.IsOverLimit(activeShape))
+            {
+                GameOver();
+            }
+            else
+            {
+                LandShape();
+                //TODO Destroy gameObject
+                // DestroyShape(m_activeShape.gameObject);
+            }
         }
 
         private void Rotate()
@@ -254,14 +252,13 @@ namespace Managers
                 PlaySound(soundManager.m_moveSound, .8f);
         }
     
-        //Refacture this method
+        //Refactor this method
         //1 - land shape
         //2 - move shape
         private void LandShape()
         {
             if (activeShape)
             {
-
                 activeShape.MoveUp();
                 gameBoard.StoreShapeInGrid(activeShape);
                 activeShape.LandShapeFX();
@@ -270,7 +267,7 @@ namespace Managers
                     ghost.Reset();
 
                 if (holder)
-                    holder.m_canRelease = true;
+                    holder.CanRelease = true;
 
                 activeShape = spawner.SpawnShape();
 
@@ -278,8 +275,7 @@ namespace Managers
                 timeToNextKeyDown = Time.time + keyRepeatRateDown;
                 timeToNextKeyRotate = Time.time + keyRepeatRateRotate;
 
-                //TODO: remove this call
-                gameBoard.StartCoroutine("ClearAllRows");
+                gameBoard.ClearAllRows();
 
                 PlaySound(soundManager.m_dropSound, .8f);
 
@@ -298,9 +294,7 @@ namespace Managers
 
                     PlaySound(soundManager.m_clearRowSound, .8f);
                 }
-
             }
-
         }
 
         public void ToggleRotDirection()
@@ -337,7 +331,7 @@ namespace Managers
         {
             Debug.Log("Restarted");
             TogglePause();
-            int index = SceneManager.GetActiveScene().buildIndex;
+            var index = SceneManager.GetActiveScene().buildIndex;
             SceneManager.LoadScene(index);
         }
 
@@ -355,7 +349,6 @@ namespace Managers
 
             Time.timeScale = (isPaused) ? 0 : 1;
             Debug.Log("Time.timeScale " + Time.timeScale);
-
         }
 
         public void Hold()
@@ -363,7 +356,7 @@ namespace Managers
             if (!holder)
                 return;
 
-            if (!holder.m_heldShape)
+            if (!holder.HeldShape)
             {
                 holder.Catch(activeShape);
                 activeShape = spawner.SpawnShape();
@@ -371,9 +364,9 @@ namespace Managers
                 if (ghost)
                     ghost.Reset();
             }
-            else if (holder.m_canRelease)
+            else if (holder.CanRelease)
             {
-                Shape temp = activeShape;
+                var temp = activeShape;
                 activeShape = holder.Release();
                 activeShape.transform.position = spawner.transform.position;
                 holder.Catch(temp);
@@ -386,7 +379,6 @@ namespace Managers
                 Debug.LogWarning("GAMECONTROLLER! Wait for cool down!");
                 PlaySound(soundManager.m_errorSound);
             }
-
         }
 
         private void PlaySound(AudioClip audioClip, float volmultiplier = .8f)
@@ -401,10 +393,14 @@ namespace Managers
 
             //horizontal
             if (Mathf.Abs(swipeMovement.x) > Mathf.Abs(swipeMovement.y))
+            {
                 swipeDir = (swipeMovement.x >= 0) ? Direction.Right : Direction.Left;
+            }
             //vertical
             else
+            {
                 swipeDir = (swipeMovement.y >= 0) ? Direction.Up : Direction.Down;
+            }
 
             return swipeDir;
         }

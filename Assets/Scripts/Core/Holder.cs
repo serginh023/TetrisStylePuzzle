@@ -1,54 +1,54 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Holder : MonoBehaviour
+namespace Core
 {
-
-    public Transform m_holderXform;
-    public Shape m_heldShape = null;
-    float m_scale = .5f;
-    public bool m_canRelease = false;
-
-    public void Catch(Shape shape)
+    public class Holder : MonoBehaviour
     {
-        if (m_heldShape != null)
+        [SerializeField] private Transform holderXform;
+        [SerializeField] private Shape heldShape;
+        
+        public bool CanRelease;
+        public Shape HeldShape => heldShape;
+        
+        private readonly float scale = .5f;
+
+        public void Catch(Shape shape)
         {
-            Debug.LogWarning("HOLDER Release a shape before trying to hold");
-            return;
+            if (heldShape != default)
+            {
+                Debug.LogWarning("HOLDER Release a shape before trying to hold");
+                return;
+            }
+
+            if (!shape)
+            {
+                Debug.LogWarning("HOLDER Invalid Shape");
+                return;
+            }
+
+            if (holderXform)
+            {
+                var shapeTransform = shape.transform;
+                shapeTransform.position = holderXform.transform.position + shape.m_QueueOffSet;
+                shapeTransform.localScale = new Vector3(scale, scale, scale);
+                heldShape = shape;
+                CanRelease = true;
+                shapeTransform.rotation = Quaternion.identity;
+            }
+            else
+            {
+                Debug.LogWarning("HOLDER Invalid holderXform");
+            }
+
         }
-        Debug.Log("teste " + m_heldShape);
-        if (!shape)
+
+        public Shape Release()
         {
-            Debug.LogWarning("HOLDER Invalid Shape");
-            return;
+            heldShape.transform.localScale = Vector3.one;
+            CanRelease = false;
+            var newShape = heldShape;
+            heldShape = null;
+            return newShape;
         }
-
-        if (m_holderXform)
-        {
-            shape.transform.position = m_holderXform.transform.position + shape.m_QueueOffSet;
-            shape.transform.localScale = new Vector3(m_scale, m_scale, m_scale);
-            m_heldShape = shape;
-            m_canRelease = true;
-            shape.transform.rotation = Quaternion.identity;
-        }
-        else
-        {
-            Debug.LogWarning("HOLDER Invalid holderXform");
-        }
-
-    }
-
-    public Shape Release()
-    {
-        m_heldShape.transform.localScale = Vector3.one;
-
-        m_canRelease = false;
-
-        Shape newShape = m_heldShape;
-
-        m_heldShape = null;
-
-        return newShape;
     }
 }
