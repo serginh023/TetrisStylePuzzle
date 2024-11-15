@@ -77,7 +77,6 @@ namespace Core
                 Vector2 pos = Vectorf.Round(child.position);
                 grid[(int)pos.x, (int)pos.y] = child;
             }
-        
         }
 
         private bool IsOccupied(int x, int y,Shape shape)
@@ -124,7 +123,12 @@ namespace Core
                 ShiftOneRowDown(i);
         }
 
-        public IEnumerator ClearAllRows()
+        public void ClearAllRows()
+        {
+            StartCoroutine(ClearAllRowsIENumerator());
+        }
+
+        private IEnumerator ClearAllRowsIENumerator()
         {
             completedRows = 0;
 
