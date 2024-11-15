@@ -5273,12 +5273,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!1 &62604069 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 126902, guid: b4da473ce0e564c229b6862e98cc5f3c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1380416712}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &75710709
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11223,12 +11217,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 229044580}
   m_CullTransparentMesh: 0
---- !u!1 &230194924 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 118434, guid: bb266f46b1cf64146ba6d47074785030,
-    type: 3}
-  m_PrefabInstance: {fileID: 28060997}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &232928650
 GameObject:
   m_ObjectHideFlags: 0
@@ -12093,12 +12081,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 443950609}
   m_CullTransparentMesh: 0
---- !u!1 &461608087 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 106820, guid: 03efd2776765f4219bb9f6c788d7f50c,
-    type: 3}
-  m_PrefabInstance: {fileID: 75710709}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &474395757
 GameObject:
   m_ObjectHideFlags: 0
@@ -12952,6 +12934,7 @@ GameObject:
   m_Component:
   - component: {fileID: 612231271}
   - component: {fileID: 612231272}
+  - component: {fileID: 612231273}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -12986,30 +12969,126 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67d734b53ce4f9644883e6c54d190e18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_musicEnabled: 1
-  m_fxEnabled: 1
-  m_musicVolume: 0.2
-  m_fxVolume: 0.5
-  m_clearRowSound: {fileID: 8300000, guid: 5e573cc7e2cd44522a9dbd65bd61eb95, type: 3}
-  m_moveSound: {fileID: 8300000, guid: 232745a37421848f0b6ba281e2775fd1, type: 3}
-  m_dropSound: {fileID: 8300000, guid: 2912ce0f9e2544ed7947ea6ba42a1347, type: 3}
-  m_gameOverSound: {fileID: 8300000, guid: fed0a0232ce1b40a882a18aa3a249a22, type: 3}
-  m_errorSound: {fileID: 8300000, guid: 837dfc9d854464e42ac6063e526eacc1, type: 3}
-  m_musicSource: {fileID: 1983823298}
-  m_musiClips:
+  musicEnabled: 1
+  fxEnabled: 1
+  fxVolume: 0.5
+  musicVolume: 0.2
+  moveSound: {fileID: 8300000, guid: 232745a37421848f0b6ba281e2775fd1, type: 3}
+  dropSound: {fileID: 8300000, guid: 2912ce0f9e2544ed7947ea6ba42a1347, type: 3}
+  holdSound: {fileID: 8300000, guid: 8e9c9cbf9d58d8b4b9692bbb73b48272, type: 3}
+  errorSound: {fileID: 8300000, guid: 837dfc9d854464e42ac6063e526eacc1, type: 3}
+  gameOverSound: {fileID: 8300000, guid: fed0a0232ce1b40a882a18aa3a249a22, type: 3}
+  clearRowSound: {fileID: 8300000, guid: 5e573cc7e2cd44522a9dbd65bd61eb95, type: 3}
+  musicSounds:
   - {fileID: 8300000, guid: 8e6afcfcba29249349c399c7826ebf58, type: 3}
   - {fileID: 8300000, guid: 771c70196026e41e3abd6f9f46b17225, type: 3}
   - {fileID: 8300000, guid: e227747a923da450c93c73bcd1a0965c, type: 3}
-  m_vocalClips:
-  - {fileID: 8300000, guid: 3ceac021a4ee34f8795b93fed21c2fc0, type: 3}
+  vocalSounds:
   - {fileID: 8300000, guid: ec3bd0966878d4089ad1fcc798bc3358, type: 3}
+  - {fileID: 8300000, guid: 3ceac021a4ee34f8795b93fed21c2fc0, type: 3}
   - {fileID: 8300000, guid: e753dc3dea92f4b1c81255878103653f, type: 3}
   - {fileID: 8300000, guid: 8b9eee15a25ac4457bc8de1db8deed46, type: 3}
-  m_gameOverVocalClip: {fileID: 8300000, guid: dde698f7e18ad439d93644afcb0de99b, type: 3}
-  m_levelUpVocalClip: {fileID: 8300000, guid: 2c74626c1fb694ae6babfb9e4b3cf48e, type: 3}
-  m_fxIconToogle: {fileID: 1309747436142288602}
-  m_musicIconToogle: {fileID: 1309747437816758942}
-  m_holdClip: {fileID: 8300000, guid: 8e9c9cbf9d58d8b4b9692bbb73b48272, type: 3}
+  musicSource: {fileID: 612231273}
+  levelUpVocalSound: {fileID: 8300000, guid: 2c74626c1fb694ae6babfb9e4b3cf48e, type: 3}
+  gameOverVocalSound: {fileID: 8300000, guid: dde698f7e18ad439d93644afcb0de99b, type: 3}
+  fxIconToggle: {fileID: 1309747436142288602}
+  musicIconToggle: {fileID: 1309747437816758942}
+--- !u!82 &612231273
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612231270}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &632107564
 GameObject:
   m_ObjectHideFlags: 0
@@ -34646,12 +34725,6 @@ Transform:
   - {fileID: 28060998}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1126072973 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 181100, guid: 5666303b722e84b51affe16857a54d12,
-    type: 3}
-  m_PrefabInstance: {fileID: 76911075}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1133137382
 GameObject:
   m_ObjectHideFlags: 0
@@ -39561,18 +39634,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!1 &1133577198 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 106820, guid: 03efd2776765f4219bb9f6c788d7f50c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1576876818}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1134607810 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 142186, guid: 284c0acc0732b467c917e3c6875bb143,
-    type: 3}
-  m_PrefabInstance: {fileID: 85197418}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1184536228
 GameObject:
   m_ObjectHideFlags: 0
@@ -44778,9 +44839,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a3cdf2aa32536c4789c2d1d286a6ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_holderXform: {fileID: 874690893}
-  m_heldShape: {fileID: 0}
-  m_canRelease: 0
+  holderXform: {fileID: 0}
+  heldShape: {fileID: 0}
+  CanRelease: 0
 --- !u!114 &1206427892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45306,7 +45367,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c786a64a717de7a46a111ab3f5426232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnFx: {fileID: 0}
   allShapes:
   - {fileID: 5313588346301636532, guid: 547109160089bf74d873a9b3b439fdbe, type: 3}
   - {fileID: 7274227546823078535, guid: 137450fab855bb542b91895e2e574a4c, type: 3}
@@ -45319,6 +45379,7 @@ MonoBehaviour:
   - {fileID: 2027355784}
   - {fileID: 719254774}
   - {fileID: 2030424602}
+  spawnFx: {fileID: 0}
 --- !u!4 &1323928063
 Transform:
   m_ObjectHideFlags: 0
@@ -45334,12 +45395,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1338679110 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 140246, guid: b0aacba59a60348939314aea22a5d176,
-    type: 3}
-  m_PrefabInstance: {fileID: 126769728}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1338823886
 GameObject:
   m_ObjectHideFlags: 0
@@ -45510,12 +45565,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1342979844}
   m_CullTransparentMesh: 0
---- !u!1 &1352949797 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 133830, guid: 54dc086887f7d4b9bbc3b88cffa9883c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1772954420}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1380416712
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -56188,7 +56237,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1772954420}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1352949797}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 06c53bc22873cf04e9832763062c4740, type: 3}
@@ -61979,15 +62028,6 @@ MonoBehaviour:
   holder: {fileID: 1206427891}
   gameBoard: {fileID: 2025751616}
   spawner: {fileID: 1323928062}
-  fxObjects:
-  - {fileID: 1338679110}
-  - {fileID: 62604069}
-  - {fileID: 1133577198}
-  - {fileID: 461608087}
-  - {fileID: 1134607810}
-  - {fileID: 1126072973}
-  - {fileID: 1352949797}
-  - {fileID: 230194924}
   pausePanel: {fileID: 420273055}
   gameOverPanel: {fileID: 902537407}
   soundManager: {fileID: 612231272}
@@ -67650,7 +67690,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 612231272}
         m_TargetAssemblyTypeName: 
-        m_MethodName: ToogleFX
+        m_MethodName: ToggleFX
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -68545,7 +68585,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 612231272}
         m_TargetAssemblyTypeName: 
-        m_MethodName: ToogleMusic
+        m_MethodName: ToggleMusic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

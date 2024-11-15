@@ -1,102 +1,139 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class SoundManager : MonoBehaviour
+namespace Managers
 {
-    public bool m_musicEnabled = true;
-    public bool m_fxEnabled = true;
-    [Range(0,1)]
-    public float m_musicVolume = .5f;
-    [Range(0, 1)]
-    public float m_fxVolume = .5f;
-
-    public AudioClip m_clearRowSound;
-
-    public AudioClip m_moveSound;
-
-    public AudioClip m_dropSound;
-
-    public AudioClip m_gameOverSound;
-
-    public AudioClip m_errorSound;
-
-    public AudioSource m_musicSource;
-
-    public AudioClip[] m_musiClips;
-
-    AudioClip m_randomAudioClip;
-
-    public AudioClip[] m_vocalClips;
-
-    public AudioClip m_gameOverVocalClip;
-
-    public AudioClip m_levelUpVocalClip;
-
-    public IconToggle m_fxIconToogle;
-
-    public IconToggle m_musicIconToogle;
-
-    public AudioClip m_holdClip;
-
-    // Start is called before the first frame update
-    void Start()
+    public enum SoundType
     {
-        UpdateMusic();
+        MOVE,
+        DROP,
+        ERROR,
+        VOCAL,
+        HOLD,
+        CLEAR_ROW,
+        GAME_OVER,
+        GAME_OVER_VOCAL,
+        LEVEL_UP
     }
-
-    public AudioClip GetRandomClip(AudioClip[] clips)
+    public class SoundManager : MonoBehaviour
     {
-        return clips[Random.Range(0, clips.Length)];
-    }
+        [SerializeField] private bool musicEnabled = true;
+        [SerializeField] private bool fxEnabled = true;
+        
+        [Header("Volume")]
+        [Range(0, 1)] [SerializeField] private float fxVolume = .5f;
+        [Range(0,1)] [SerializeField] private float musicVolume = .5f;
+        
+        [Header("Audio Clips")]
+        [SerializeField] private AudioClip moveSound;
+        [SerializeField] private AudioClip dropSound;
+        [SerializeField] private AudioClip holdSound;
+        [SerializeField] private AudioClip errorSound;
+        [SerializeField] private AudioClip gameOverSound;
+        [SerializeField] private AudioClip clearRowSound;
+        [SerializeField] private AudioClip[] musicSounds;
+        [SerializeField] private AudioClip[] vocalSounds;
+        [SerializeField] private AudioSource musicSource;
+        [SerializeField] private AudioClip levelUpVocalSound;
+        [SerializeField] private AudioClip gameOverVocalSound;
+        
+        [Header("Toggles")]
+        [SerializeField] private IconToggle fxIconToggle;
+        [SerializeField] private IconToggle musicIconToggle;
+        private AudioClip m_randomAudioClip;
+        
+        public AudioSource MusicSource => musicSource;
+        public float MusicVolume => musicVolume;
 
-    public void ToogleMusic()
-    {
-        m_musicEnabled = !m_musicEnabled;
-        UpdateMusic();
-
-        if (m_musicIconToogle)
+        private void Start()
         {
-            m_musicIconToogle.ToogleIcon(m_musicEnabled);
+            UpdateMusic();
         }
-    }
 
-    public void ToogleFX()
-    {
-        m_fxEnabled = !m_fxEnabled;
-        if (m_fxIconToogle)
+        private AudioClip GetRandomClip(AudioClip[] clips)
         {
-            m_fxIconToogle.ToogleIcon(m_fxEnabled);
+            return clips[Random.Range(0, clips.Length)];
         }
-    }
-
-    void PlayBackGroundMusic(AudioClip musicCLip)
-    {
-        if(!m_musicEnabled || !musicCLip || !m_musicSource)
-            return;
-
-        m_musicSource.Stop();
-
-        m_musicSource.clip = musicCLip;
-
-        m_musicSource.volume = m_musicVolume;
-
-        m_musicSource.loop = true;
-
-        m_musicSource.Play();
-    }
-
-    void UpdateMusic()
-    {
-        if(m_musicSource.isPlaying != m_musicEnabled)
+        
+        private AudioClip GetRandomVocalSound()
         {
-            if (m_musicEnabled)
+            return vocalSounds[Random.Range(0, vocalSounds.Length)];
+        }
+
+        public void ToggleMusic()
+        {
+            musicEnabled = !musicEnabled;
+            UpdateMusic();
+
+            if (musicIconToggle)
             {
-                m_randomAudioClip = GetRandomClip(m_musiClips);
+                musicIconToggle.ToogleIcon(musicEnabled);
+            }
+        }
+
+        public void ToggleFX()
+        {
+            fxEnabled = !fxEnabled;
+            if (fxIconToggle)
+            {
+                fxIconToggle.ToogleIcon(fxEnabled);
+            }
+        }
+
+        private void PlayBackGroundMusic(AudioClip musicCLip)
+        {
+            if(!musicEnabled || !musicCLip || !musicSource)
+                return;
+
+            musicSource.Stop();
+            musicSource.clip = musicCLip;
+            musicSource.volume = musicVolume;
+            musicSource.loop = true;
+            musicSource.Play();
+        }
+
+        private void UpdateMusic()
+        {
+            if (musicSource.isPlaying == musicEnabled) 
+                return;
+            if (musicEnabled)
+            {
+                m_randomAudioClip = GetRandomClip(musicSounds);
                 PlayBackGroundMusic(m_randomAudioClip);
             }
             else
-                m_musicSource.Stop();
+                musicSource.Stop();
+        }
+        
+        public void PlaySound(SoundType type, float volMultiplier = .8f)
+        {
+            if (!fxEnabled)
+                return;
+            
+            switch (type)
+            {
+                case SoundType.MOVE: AudioSource.PlayClipAtPoint(moveSound, transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                case SoundType.DROP: AudioSource.PlayClipAtPoint(dropSound, transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                case SoundType.ERROR: AudioSource.PlayClipAtPoint(errorSound, transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                case SoundType.VOCAL: AudioSource.PlayClipAtPoint(GetRandomVocalSound(), transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                case SoundType.CLEAR_ROW: AudioSource.PlayClipAtPoint(clearRowSound, transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                case SoundType.GAME_OVER: AudioSource.PlayClipAtPoint(gameOverSound, transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                case SoundType.LEVEL_UP: AudioSource.PlayClipAtPoint(levelUpVocalSound, transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                case SoundType.HOLD: AudioSource.PlayClipAtPoint(holdSound, transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                case SoundType.GAME_OVER_VOCAL: AudioSource.PlayClipAtPoint(gameOverVocalSound, transform.position, Mathf.Clamp( fxVolume * volMultiplier, 0.05f, 1f ));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
         }
     }
 }

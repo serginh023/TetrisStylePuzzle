@@ -220,10 +220,10 @@ namespace Managers
             if (!gameBoard.IsValidPosition(activeShape))
             {
                 activeShape.RotateClockwise(!clockwise);
-                PlaySound(soundManager.m_errorSound, .8f);
+                soundManager.PlaySound(SoundType.MOVE);
             }
             else
-                PlaySound(soundManager.m_moveSound, .8f);
+                soundManager.PlaySound(SoundType.MOVE);
         }
 
         private void MoveRight()
@@ -233,10 +233,10 @@ namespace Managers
             if (!gameBoard.IsValidPosition(activeShape))
             {
                 activeShape.MoveLeft();
-                PlaySound(soundManager.m_errorSound, .8f);
+                soundManager.PlaySound(SoundType.MOVE);
             }
             else
-                PlaySound(soundManager.m_moveSound, .8f);
+                soundManager.PlaySound(SoundType.MOVE);
         }
 
         private void MoveLeft()
@@ -246,10 +246,11 @@ namespace Managers
             if (!gameBoard.IsValidPosition(activeShape))
             {
                 activeShape.MoveRight();
-                PlaySound(soundManager.m_errorSound, .8f);
+                soundManager.PlaySound(SoundType.ERROR);
             }
             else
-                PlaySound(soundManager.m_moveSound, .8f);
+                soundManager.PlaySound(SoundType.MOVE);
+
         }
     
         //Refactor this method
@@ -276,8 +277,7 @@ namespace Managers
                 timeToNextKeyRotate = Time.time + keyRepeatRateRotate;
 
                 gameBoard.ClearAllRows();
-
-                PlaySound(soundManager.m_dropSound, .8f);
+                soundManager.PlaySound(SoundType.DROP);
 
                 if (gameBoard.CompletedRows > 0)
                 {
@@ -285,14 +285,15 @@ namespace Managers
 
                     if (scoreManager.DidLevelUp)
                     {
-                        PlaySound(soundManager.m_levelUpVocalClip, .75f);
+                        soundManager.PlaySound(SoundType.LEVEL_UP);
                         // dropRateModded = DropRate - Mathf.Clamp(((float)ScoreManager.m_level - 1) * 0.05f, 0.1f, 1f);
                     }
                     else
                     if (gameBoard.CompletedRows > 1)
-                        PlaySound(soundManager.GetRandomClip(soundManager.m_vocalClips), .8f);
+                        soundManager.PlaySound(SoundType.VOCAL);
 
-                    PlaySound(soundManager.m_clearRowSound, .8f);
+
+                    soundManager.PlaySound(SoundType.CLEAR_ROW, .8f);
                 }
             }
         }
@@ -311,8 +312,8 @@ namespace Managers
             activeShape.MoveUp();
             gameOver = true;
             Debug.LogWarning(activeShape + " Shape is over the limit check");
-            PlaySound(soundManager.m_gameOverSound, .9f);
-            PlaySound(soundManager.m_gameOverVocalClip, .9f);
+            soundManager.PlaySound(SoundType.GAME_OVER);
+            soundManager.PlaySound(SoundType.GAME_OVER_VOCAL, .8f);
             StartCoroutine(GameOverRoutine());
         }
 
@@ -345,7 +346,7 @@ namespace Managers
             pausePanel.SetActive(isPaused);
 
             if (soundManager)
-                soundManager.m_musicSource.volume = (isPaused) ? soundManager.m_musicVolume * .25f : soundManager.m_musicVolume;
+                soundManager.MusicSource.volume = (isPaused) ? soundManager.MusicVolume * .25f : soundManager.MusicVolume;
 
             Time.timeScale = (isPaused) ? 0 : 1;
             Debug.Log("Time.timeScale " + Time.timeScale);
@@ -360,7 +361,7 @@ namespace Managers
             {
                 holder.Catch(activeShape);
                 activeShape = spawner.SpawnShape();
-                PlaySound(soundManager.m_holdClip);
+                soundManager.PlaySound(SoundType.HOLD);
                 if (ghost)
                     ghost.Reset();
             }
@@ -370,22 +371,24 @@ namespace Managers
                 activeShape = holder.Release();
                 activeShape.transform.position = spawner.transform.position;
                 holder.Catch(temp);
-                PlaySound(soundManager.m_holdClip);
+                soundManager.PlaySound(SoundType.HOLD);
                 if (ghost)
                     ghost.Reset();
             }
             else
             {
                 Debug.LogWarning("GAMECONTROLLER! Wait for cool down!");
-                PlaySound(soundManager.m_errorSound);
+                soundManager.PlaySound(SoundType.ERROR);
             }
         }
-
+        /* 
         private void PlaySound(AudioClip audioClip, float volmultiplier = .8f)
         {
             if (soundManager.m_fxEnabled && audioClip)
                 AudioSource.PlayClipAtPoint(audioClip, mainCamera.transform.position, Mathf.Clamp( soundManager.m_fxVolume * volmultiplier, 0.05f, 1f ));
         }
+        
+        */
 
         private Direction GetDirection(Vector2 swipeMovement)
         {
