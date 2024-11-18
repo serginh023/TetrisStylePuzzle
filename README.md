@@ -11,6 +11,5 @@ This game can be encontered at:
 
 https://www.udemy.com/course/make-a-tetris-style-puzzler-in-unity/
 
-# Badges
-https://img.shields.io/badge/Version-v1.0.0-blue
-https://img.shields.io/badge/Game_apk_status-Not_available_yet-red
+![Static Badge](https://img.shields.io/badge/Version-v1.0.0-blue)
+![Static Badge](https://img.shields.io/badge/Game_apk_status-Not_available_yet-red)
