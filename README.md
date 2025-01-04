@@ -12,4 +12,4 @@ Actually, this game is not available yet.
 # How to play
 As many others puzzle games, you play fitting the block wich get down slowly and in a random form.
 You can get down this pieces as you wish, and rotate the pieces in order to fit the order pieces in board.
-You too can Hold a piece a time, to get it in another moment.
+You too can Hold a piece a time, and use again in another time.
