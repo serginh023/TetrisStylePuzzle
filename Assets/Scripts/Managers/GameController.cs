@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Core;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Utility;
 
@@ -59,6 +60,11 @@ namespace Managers
         //Direction
         private Direction dragDirection = Direction.None;
         private Direction swipeDirection = Direction.None;
+
+        [SerializeField] private InputActionReference upButton;
+        [SerializeField] private InputActionReference downButton;
+        [SerializeField] private InputActionReference leftButton;
+        [SerializeField] private InputActionReference rightButton;
         #endregion
 
         #region Monobehaviour
@@ -87,6 +93,12 @@ namespace Managers
                     activeShape = spawner.SpawnShape();
             }
 
+            #region NewInputSystem
+            downButton.action.started += MoveDown;
+            rightButton.action.started += MoveRight;
+            leftButton.action.started += MoveLeft;
+            upButton.action.started += Rotate;
+            #endregion
         }
 
         // Update is called once per frame
@@ -122,54 +134,55 @@ namespace Managers
         #region Inputs
         private void PlayerInput()
         {
+            // playerInput.actions.actionMaps.
             #region PC/MAC
             //if(Input.GetKey("right") && Time.time > m_TimeToNextKey || Input.GetKeyDown(KeyCode.RightArrow) ) --> Alternativa, não passa pelo input manager
-            if (Input.GetButton("MoveRight") && Time.time > timeToNextKeyLeftRight || Input.GetButtonDown("MoveRight"))// GetButtonDown registra somente o primeiro frame que o botão foi pressionado
-                MoveRight();
-            else if (Input.GetButton("MoveLeft") && Time.time > timeToNextKeyLeftRight || Input.GetButtonDown("MoveLeft"))
-                MoveLeft();
-            else if (Input.GetButtonDown("Rotate") && Time.time > timeToNextKeyRotate)
-                Rotate();
-            else if (Input.GetButton("MoveDown") && (Time.time > timeToNextKeyDown) || (Time.time > timeToDrop)) //segunda verificação é para a mecânica de cair
-                MoveDown();
+            // if (Input.GetButton("MoveRight") && Time.time > timeToNextKeyLeftRight || Input.GetButtonDown("MoveRight"))// GetButtonDown registra somente o primeiro frame que o botão foi pressionado
+            //     MoveRight();
+            // else if (Input.GetButton("MoveLeft") && Time.time > timeToNextKeyLeftRight || Input.GetButtonDown("MoveLeft"))
+            //     MoveLeft();
+            // else if (Input.GetButtonDown("Rotate") && Time.time > timeToNextKeyRotate)
+            //     Rotate();
+            // else if (Input.GetButton("MoveDown") && (Time.time > timeToNextKeyDown) || (Time.time > timeToDrop)) //segunda verificação é para a mecânica de cair
+            //     MoveDown();
             #endregion
 
             #region MOBILE
-            else if ( (dragDirection == Direction.Right && Time.time > timeToNextDrag)
-                      ||
-                      (swipeDirection == Direction.Right && Time.time > timeToNextSwipe) )
-            {
-                MoveRight();
-                timeToNextDrag = Time.time + minTimeToDrag;
-                timeToNextSwipe = Time.time + minTimeToSwipe;
-            }
-            else if ( (dragDirection == Direction.Left && Time.time > timeToNextDrag)
-                      ||
-                      (swipeDirection == Direction.Left && Time.time > timeToNextSwipe) )
-            {
-                MoveLeft();
-                timeToNextDrag = Time.time + minTimeToDrag;
-                timeToNextSwipe = Time.time + minTimeToSwipe;
-            }
-            else if ( didTap || (swipeDirection == Direction.Up && Time.time > timeToNextSwipe) )
-            {
-                Rotate();
-                timeToNextSwipe = Time.time + minTimeToSwipe;
-            }
-            else if ( (dragDirection == Direction.Down && Time.time > timeToNextDrag)
-                      ||
-                      (swipeDirection == Direction.Down && Time.time > timeToNextSwipe) )
-            {
-                MoveDown();
-            }
+            // else if ( (dragDirection == Direction.Right && Time.time > timeToNextDrag)
+            //           ||
+            //           (swipeDirection == Direction.Right && Time.time > timeToNextSwipe) )
+            // {
+            //     MoveRight();
+            //     timeToNextDrag = Time.time + minTimeToDrag;
+            //     timeToNextSwipe = Time.time + minTimeToSwipe;
+            // }
+            // else if ( (dragDirection == Direction.Left && Time.time > timeToNextDrag)
+            //           ||
+            //           (swipeDirection == Direction.Left && Time.time > timeToNextSwipe) )
+            // {
+            //     MoveLeft();
+            //     timeToNextDrag = Time.time + minTimeToDrag;
+            //     timeToNextSwipe = Time.time + minTimeToSwipe;
+            // }
+            // else if ( didTap || (swipeDirection == Direction.Up && Time.time > timeToNextSwipe) )
+            // {
+            //     Rotate();
+            //     timeToNextSwipe = Time.time + minTimeToSwipe;
+            // }
+            // else if ( (dragDirection == Direction.Down && Time.time > timeToNextDrag)
+            //           ||
+            //           (swipeDirection == Direction.Down && Time.time > timeToNextSwipe) )
+            // {
+            //     MoveDown();
+            // }
             #endregion
 
-            else if (Input.GetButtonDown("ToggleRotation"))
-                ToggleRotDirection();
-            else if (Input.GetButtonDown("Pause"))
-                TogglePause();
-            else if (Input.GetButtonDown("Hold"))
-                Hold();
+            // else if (Input.GetButtonDown("ToggleRotation"))
+            //     ToggleRotDirection();
+            // else if (Input.GetButtonDown("Pause"))
+            //     TogglePause();
+            // else if (Input.GetButtonDown("Hold"))
+            //     Hold();
 
             dragDirection = Direction.None;
             swipeDirection = Direction.None;
@@ -194,6 +207,11 @@ namespace Managers
         #endregion
 
         #region Movement
+
+        private void MoveDown(InputAction.CallbackContext context)
+        {
+            MoveDown();
+        }
         private void MoveDown()
         {
             timeToDrop = Time.time + dropRate;
@@ -213,6 +231,11 @@ namespace Managers
             }
         }
 
+        private void Rotate(InputAction.CallbackContext context)
+        {
+            Rotate();
+        }
+        
         private void Rotate()
         {
             timeToNextKeyRotate = Time.time + keyRepeatRateRotate;
@@ -225,7 +248,11 @@ namespace Managers
             else
                 soundManager.PlaySound(SoundType.MOVE);
         }
-
+        
+        private void MoveRight(InputAction.CallbackContext context)
+        {
+            MoveRight();
+        }
         private void MoveRight()
         {
             timeToNextKeyLeftRight += Time.time + keyRepeatRateLeftRight;
@@ -239,6 +266,11 @@ namespace Managers
                 soundManager.PlaySound(SoundType.MOVE);
         }
 
+        private void MoveLeft(InputAction.CallbackContext context)
+        {
+            MoveLeft();
+        }
+        
         private void MoveLeft()
         {
             timeToNextKeyLeftRight += Time.time + keyRepeatRateLeftRight;
