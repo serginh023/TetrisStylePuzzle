@@ -45281,7 +45281,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3ceac021a4ee34f8795b93fed21c2fc0, type: 3}
   - {fileID: 8300000, guid: e753dc3dea92f4b1c81255878103653f, type: 3}
   - {fileID: 8300000, guid: 8b9eee15a25ac4457bc8de1db8deed46, type: 3}
-  musicSource: {fileID: 0}
+  musicSource: {fileID: 1983823298}
   levelUpVocalSound: {fileID: 8300000, guid: 2c74626c1fb694ae6babfb9e4b3cf48e, type: 3}
   gameOverVocalSound: {fileID: 8300000, guid: dde698f7e18ad439d93644afcb0de99b, type: 3}
   fxIconToggle: {fileID: 1309747436142288602}
