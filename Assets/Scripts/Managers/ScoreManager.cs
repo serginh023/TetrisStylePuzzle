@@ -6,15 +6,17 @@ namespace Managers
 {
     public class ScoreManager : MonoBehaviour
     {
+        [SerializeField] private Text linesText;
+        [SerializeField] private Text levelText;
+        [SerializeField] private Text scoreText;
+        
         private int score;
         private int lines;
         private int level;
         private int linesPerLevel = 5;
         private const int m_minLines = 1;
         private const int m_maxLines = 4;
-        private Text linesText;
-        private Text levelText;
-        private Text scoreText;
+
         private bool didLevelUp;
 
         public bool DidLevelUp => didLevelUp;
