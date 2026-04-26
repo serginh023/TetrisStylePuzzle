@@ -12766,8 +12766,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 1338823888}
+        m_TargetAssemblyTypeName: Managers.GameController, Assembly-CSharp
         m_MethodName: Restart
         m_Mode: 1
         m_Arguments:
