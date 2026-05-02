@@ -9,8 +9,7 @@ namespace Core
         [SerializeField] private Shape[] allShapes;
         [SerializeField] private Transform[] queueXforms;
         [SerializeField] private ParticlePlayer spawnFx;
-
-        private const float queueScale = .5f;
+        [SerializeField] private float queueScale = .1f;
         private Shape[] queuedShapes = new Shape[3];
 
         private void Awake()
