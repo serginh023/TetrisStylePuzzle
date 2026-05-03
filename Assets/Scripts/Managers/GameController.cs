@@ -53,7 +53,7 @@ namespace Managers
         
         //Objects
         private Shape activeShape;
-        private IconToggle rotIconToggle;
+        [SerializeField] private IconToggle rotationIcon;
         private Camera mainCamera;
         
         //Direction
@@ -128,8 +128,10 @@ namespace Managers
                 MoveRight();
             else if (Input.GetButton("MoveLeft") && Time.time > timeToNextKeyLeftRight || Input.GetButtonDown("MoveLeft"))
                 MoveLeft();
-            else if (Input.GetButtonDown("Rotate") && Time.time > timeToNextKeyRotate)
+            else if (Input.GetButtonDown("Rotate") && Time.time > timeToNextKeyRotate){
+
                 Rotate();
+            }
             else if (Input.GetButton("MoveDown") && (Time.time > timeToNextKeyDown) || (Time.time > timeToDrop)) //segunda verificação é para a mecânica de cair
                 MoveDown();
             #endregion
@@ -215,6 +217,7 @@ namespace Managers
 
         private void Rotate()
         {
+            Debug.Log("rotate");
             timeToNextKeyRotate = Time.time + keyRepeatRateRotate;
             activeShape.RotateClockwise(clockwise);
             if (!gameBoard.IsValidPosition(activeShape))
@@ -301,8 +304,8 @@ namespace Managers
         public void ToggleRotDirection()
         {
             clockwise = !clockwise;
-            if (rotIconToggle)
-                rotIconToggle.ToogleIcon(clockwise);
+            if (rotationIcon)
+                rotationIcon.ToogleIcon(clockwise);
         }
         #endregion
 
