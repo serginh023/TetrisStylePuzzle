@@ -1,5 +1,5 @@
 ![Static Badge](https://img.shields.io/badge/Version-v1.1.0-blue)
-![Static Badge](https://img.shields.io/badge/Game_apk_status-Not_available_yet-red)
+![Static Badge](https://img.shields.io/badge/Apk_status-Not_available_yet-red)
 
 # Introduction
 This is my Tetris Style Puzzle, made in Unity 3D, wich was developed for Android.
