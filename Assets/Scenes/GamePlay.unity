@@ -45287,6 +45287,7 @@ MonoBehaviour:
   keyRepeatRateLeftRight: 0.065
   minTimeToDrag: 0.15
   minTimeToSwipe: 0.3
+  rotationIcon: {fileID: 1309747437614856944}
 --- !u!114 &1338823889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67973,7 +67974,7 @@ GameObject:
   - component: {fileID: 1309747437027162399}
   - component: {fileID: 1309747437027162400}
   m_Layer: 5
-  m_Name: Rotate
+  m_Name: RotateButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
