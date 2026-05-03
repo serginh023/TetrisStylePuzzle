@@ -1,4 +1,4 @@
-![Static Badge](https://img.shields.io/badge/Version-v1.0.0-blue)
+![Static Badge](https://img.shields.io/badge/Version-v1.1.0-blue)
 ![Static Badge](https://img.shields.io/badge/Game_apk_status-Not_available_yet-red)
 
 # Introduction
