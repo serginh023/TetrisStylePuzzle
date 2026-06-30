@@ -26,7 +26,7 @@ jobs:
     permissions:
       contents: read
     env:
-      UNITY_PROJECT_PATH: './TetrisStylePuzzle'
+      UNITY_PROJECT_PATH: '.'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
